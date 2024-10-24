@@ -20,13 +20,13 @@ pub const ARG_FOLLOW_LINKS: &str = "follow-links";
 pub const ARG_TARGET_OS: &str = "target_os";
 
 #[cfg(all(feature = "go", feature = "python"))]
-const AVAILABLE_LANGUAGES: [&str; 7] = ["kotlin", "scala", "swift", "typescript", "go", "python"];
+const AVAILABLE_LANGUAGES: [&str; 6] = ["kotlin", "scala", "swift", "typescript", "go", "python"];
 
 #[cfg(all(feature = "go", not(feature = "python")))]
-const AVAILABLE_LANGUAGES: [&str; 6] = ["kotlin", "scala", "swift", "typescript", "go"];
+const AVAILABLE_LANGUAGES: [&str; 5] = ["kotlin", "scala", "swift", "typescript", "go"];
 
 #[cfg(all(feature = "python", not(feature = "go")))]
-const AVAILABLE_LANGUAGES: [&str; 6] = ["kotlin", "scala", "swift", "typescript", "python"];
+const AVAILABLE_LANGUAGES: [&str; 5] = ["kotlin", "scala", "swift", "typescript", "python"];
 
 #[cfg(not(any(feature = "go", feature = "python")))]
 const AVAILABLE_LANGUAGES: [&str; 4] = ["kotlin", "scala", "swift", "typescript"];
