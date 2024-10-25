@@ -699,7 +699,6 @@ mod test {
             String::from_utf8_lossy(mock_writer),
             "    field: Optional[str]\n"
         );
-        //asdasd
     }
 
     #[test]
