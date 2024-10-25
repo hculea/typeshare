@@ -19,20 +19,26 @@ pub const ARG_OUTPUT_FOLDER: &str = "output-folder";
 pub const ARG_FOLLOW_LINKS: &str = "follow-links";
 pub const ARG_TARGET_OS: &str = "target_os";
 
-#[cfg(all(feature = "go", feature = "python"))]
-const AVAILABLE_LANGUAGES: [&str; 6] = ["kotlin", "scala", "swift", "typescript", "go", "python"];
+// #[cfg(all(feature = "go", feature = "python"))]
+// const AVAILABLE_LANGUAGES: [&str; 6] = ["kotlin", "scala", "swift", "typescript", "go", "python"];
 
-#[cfg(all(feature = "go", not(feature = "python")))]
-const AVAILABLE_LANGUAGES: [&str; 5] = ["kotlin", "scala", "swift", "typescript", "go"];
+// #[cfg(all(feature = "go", not(feature = "python")))]
+// const AVAILABLE_LANGUAGES: [&str; 5] = ["kotlin", "scala", "swift", "typescript", "go"];
 
-#[cfg(all(feature = "python", not(feature = "go")))]
-const AVAILABLE_LANGUAGES: [&str; 5] = ["kotlin", "scala", "swift", "typescript", "python"];
+// #[cfg(all(feature = "python", not(feature = "go")))]
+// const AVAILABLE_LANGUAGES: [&str; 5] = ["kotlin", "scala", "swift", "typescript", "python"];
 
-#[cfg(not(any(feature = "go", feature = "python")))]
-const AVAILABLE_LANGUAGES: [&str; 4] = ["kotlin", "scala", "swift", "typescript"];
+// #[cfg(not(any(feature = "go", feature = "python")))]
+// const AVAILABLE_LANGUAGES: [&str; 4] = ["kotlin", "scala", "swift", "typescript"];
 
 /// Parse command line arguments.
 pub(crate) fn build_command() -> Command<'static> {
+    let languages: Vec<&str> = vec!["kotlin", "scala", "swift", "typescript"];
+    #[cfg(feature = "go")]
+    languages.push("go");
+    #[cfg(feature = "python")]
+    languages.push("python");
+
     command!("typeshare")
         .version(VERSION)
         .args_conflicts_with_subcommands(true)
@@ -54,7 +60,7 @@ pub(crate) fn build_command() -> Command<'static> {
                 .long("lang")
                 .help("Language of generated types")
                 .takes_value(true)
-                .possible_values(AVAILABLE_LANGUAGES)
+                .possible_values(languages)
                 .required_unless(ARG_GENERATE_CONFIG),
         )
         .arg(
