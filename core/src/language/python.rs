@@ -745,17 +745,12 @@ mod test {
 
     #[test]
     fn simple_test_tagged_enum() {
-        use serde::{Deserialize, Serialize};
         let mut python = Python::default();
-        #[derive(Serialize, Deserialize)]
-        #[serde(tag = "test_tag_key", content = "test_content_key")]
+
         enum Test {
             Unit,
             Tuple(i32),
-            Struct {
-                #[serde(default)]
-                field: String,
-            },
+            Struct { field: String },
         }
 
         let shared_enum = RustEnumShared {
