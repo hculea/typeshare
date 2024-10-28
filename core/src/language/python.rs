@@ -496,7 +496,7 @@ impl Python {
                     name
                 ))
                 .collect::<Vec<String>>()
-                .join(",\n")
+                .join("\n")
         )?;
         writeln!(w)?;
 
