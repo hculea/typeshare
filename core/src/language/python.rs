@@ -491,12 +491,12 @@ impl Python {
             all_enum_variants_name
                 .iter()
                 .map(|name| format!(
-                    "	{} = \"{}\"",
+                    "    {} = \"{}\"",
                     name.to_case(Case::Snake).to_uppercase(),
                     name
                 ))
                 .collect::<Vec<String>>()
-                .join(",\n    ")
+                .join(",\n")
         )?;
         writeln!(w)?;
 
@@ -504,16 +504,15 @@ impl Python {
         // write each of the enum variant as a class:
         for variant in &shared.variants {
             let variant_name = &variant.shared().id.renamed;
-            let class_name = format!("{}{}", shared.id.renamed, variant_name);
+            let class_name = format!("{}{}Inner", shared.id.renamed, variant_name);
             variant_class_names.push(class_name.clone());
 
             match variant {
                 RustEnumVariant::Unit(unit_variant) => {
                     self.add_import("typing".to_string(), "Literal".to_string());
-                    let variant_name =
-                        format!("{}{}", shared.id.original, unit_variant.id.original);
+                    let variant_name = format!("{}{}", shared.id.renamed, unit_variant.id.renamed);
                     variants.push((variant_name.clone(), vec![]));
-                    writeln!(w, "{class_name}(BaseModel):")?;
+                    writeln!(w, "class {class_name}(BaseModel):")?;
                     writeln!(
                         w,
                         "    {content_key} = Literal[\"{}\"]",
@@ -534,7 +533,12 @@ impl Python {
                             dedup(&mut generic_parameters);
                             if generic_parameters.is_empty() {
                                 self.add_import("pydantic".to_string(), "BaseModel".to_string());
-                                writeln!(w, "class {}(BaseModel):", variant_name).unwrap();
+                                writeln!(
+                                    w,
+                                    "class {}{}(BaseModel):",
+                                    shared.id.renamed, variant_name
+                                )
+                                .unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
                                 self.add_import(
@@ -543,8 +547,9 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {}(GenericModel, Generic[{}]):",
+                                    "class {}{}Inner(GenericModel, Generic[{}]):",
                                     // note: generics is always unique (a single item)
+                                    shared.id.renamed,
                                     variant_name,
                                     generic_parameters.join(", ")
                                 )
@@ -561,7 +566,12 @@ impl Python {
                             }
                             if generics.is_empty() {
                                 self.add_import("pydantic".to_string(), "BaseModel".to_string());
-                                writeln!(w, "class {}(BaseModel):", variant_name).unwrap();
+                                writeln!(
+                                    w,
+                                    "class {}{}Inner(BaseModel):",
+                                    shared.id.renamed, variant_name
+                                )
+                                .unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
                                 self.add_import(
@@ -570,8 +580,8 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {}(GenericModel, Generic[{}]):",
-                                    // note: generics is always unique (a single item)
+                                    "class {}{}Inner(GenericModel, Generic[{}]):",
+                                    shared.id.renamed,
                                     variant_name,
                                     generics.join(", ")
                                 )
