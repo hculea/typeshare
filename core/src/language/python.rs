@@ -264,7 +264,7 @@ impl Language for Python {
     fn write_enum(&mut self, w: &mut dyn Write, e: &RustEnum) -> std::io::Result<()> {
         // Make a suitable name for an anonymous struct enum variant
         let make_anonymous_struct_name =
-            |variant_name: &str| format!("{}{}Inner", &e.shared().id.original, variant_name);
+            |variant_name: &str| format!("{}{}", &e.shared().id.original, variant_name);
 
         // Generate named types for any anonymous struct variants of this enum
         self.write_types_for_anonymous_structs(w, e, &make_anonymous_struct_name)?;
@@ -504,7 +504,7 @@ impl Python {
         // write each of the enum variant as a class:
         for variant in &shared.variants {
             let variant_name = &variant.shared().id.renamed;
-            let class_name = format!("{}{}Inner", shared.id.renamed, variant_name);
+            let class_name = format!("{}{}", shared.id.renamed, variant_name);
             variant_class_names.push(class_name.clone());
 
             match variant {
@@ -547,7 +547,7 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {}{}Inner(GenericModel, Generic[{}]):",
+                                    "class {}{}(GenericModel, Generic[{}]):",
                                     // note: generics is always unique (a single item)
                                     shared.id.renamed,
                                     variant_name,
@@ -568,7 +568,7 @@ impl Python {
                                 self.add_import("pydantic".to_string(), "BaseModel".to_string());
                                 writeln!(
                                     w,
-                                    "class {}{}Inner(BaseModel):",
+                                    "class {}{}(BaseModel):",
                                     shared.id.renamed, variant_name
                                 )
                                 .unwrap();
@@ -580,7 +580,7 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {}{}Inner(GenericModel, Generic[{}]):",
+                                    "class {}{}(GenericModel, Generic[{}]):",
                                     shared.id.renamed,
                                     variant_name,
                                     generics.join(", ")
