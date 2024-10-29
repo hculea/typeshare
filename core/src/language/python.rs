@@ -511,6 +511,7 @@ impl Python {
         writeln!(w)?;
 
         let mut variant_class_names = vec![];
+        let mut variant_constructors = vec![];
         // write each of the enum variant as a class:
         for variant in &shared.variants {
             let class_name = make_struct_name(&variant.shared().id.original);
@@ -591,8 +592,51 @@ impl Python {
                     writeln!(w, "    {content_key}: {python_type}")?;
                     writeln!(w)?;
                 }
-                RustEnumVariant::AnonymousStruct { .. } => {
-                    // taken care of by write_types_for_anonymous_structs in write_enum
+                RustEnumVariant::AnonymousStruct {
+                    fields,
+                    shared: variant_shared,
+                } => {
+                    // writing is taken care of by write_types_for_anonymous_structs in write_enum
+                    // we just need to push to the variant_constructors
+                    let ctor_param = fields
+                        .iter()
+                        .map(|f| {
+                            let python_field_name = python_property_aware_rename(&f.id.original);
+                            let python_type = self
+                                .format_type(&f.ty, shared.generic_types.as_slice())
+                                .unwrap();
+                            (python_field_name, python_type)
+                        })
+                        .collect::<Vec<(String, String)>>();
+                    variant_constructors.push(format!(
+                        r#"
+    @classmethod
+    def {}(cls, {ctor_params}):
+        return cls(
+		{tag_key}={enum_name}Types.{variant_tag},
+		{content_key}={class_name}({ctor_params_names}))
+"#,
+                        variant.shared().id.renamed,
+                        ctor_params = ctor_param
+                            .iter()
+                            .map(|(name, ty)| format!("{}: {}", name, ty))
+                            .collect::<Vec<String>>()
+                            .join(", "),
+                        content_key = content_key,
+                        class_name = class_name,
+                        ctor_params_names = ctor_param
+                            .iter()
+                            .map(|(name, _)| format!("{name} = {name}"))
+                            .collect::<Vec<String>>()
+                            .join(", "),
+                        tag_key = tag_key,
+                        enum_name = shared.id.renamed,
+                        variant_tag = variant_shared
+                            .id
+                            .renamed
+                            .to_case(Case::Snake)
+                            .to_uppercase()
+                    ));
                 }
             }
         }
@@ -607,6 +651,11 @@ impl Python {
             variant_class_names.join(", ")
         )?;
         writeln!(w)?;
+        writeln!(
+            w,
+            "{variant_constructors}",
+            variant_constructors = variant_constructors.join("\n\n")
+        )?;
         Ok(())
     }
 }
