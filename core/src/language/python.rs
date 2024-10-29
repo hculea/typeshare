@@ -285,7 +285,7 @@ impl Language for Python {
                             "\"{}\"",
                             match v {
                                 RustEnumVariant::Unit(v) => {
-                                    v.id.renamed.clone()
+                                    v.id.renamed.replace("\"", "\\\"")
                                 }
                                 _ => panic!(),
                             }
@@ -303,7 +303,13 @@ impl Language for Python {
                 shared,
                 ..
             } => {
-                self.write_algebraic_enum(tag_key, content_key, shared, w)?;
+                self.write_algebraic_enum(
+                    tag_key,
+                    content_key,
+                    shared,
+                    w,
+                    &make_anonymous_struct_name,
+                )?;
             }
         };
         Ok(())
@@ -467,6 +473,7 @@ impl Python {
         content_key: &str,
         shared: &RustEnumShared,
         w: &mut dyn Write,
+        make_struct_name: &dyn Fn(&str) -> String,
     ) -> std::io::Result<()> {
         shared
             .generic_types
@@ -474,6 +481,8 @@ impl Python {
             .cloned()
             .for_each(|v| self.add_type_var(v));
         let mut variants: Vec<(String, Vec<String>)> = Vec::new();
+        self.add_import("typing".to_string(), "Union".to_string());
+        self.add_import("pydantic".to_string(), "Enum".to_string());
         // write "types" class: a union of all the enum variants
         writeln!(w, "class {}Types(str, Enum):", shared.id.renamed)?;
         let all_enum_variants_name = shared
@@ -503,8 +512,7 @@ impl Python {
         let mut variant_class_names = vec![];
         // write each of the enum variant as a class:
         for variant in &shared.variants {
-            let variant_name = &variant.shared().id.renamed;
-            let class_name = format!("{}{}", shared.id.renamed, variant_name);
+            let class_name = make_struct_name(&variant.shared().id.original);
             variant_class_names.push(class_name.clone());
 
             match variant {
@@ -516,7 +524,8 @@ impl Python {
                     writeln!(
                         w,
                         "    {content_key} = Literal[\"{}\"]",
-                        unit_variant.id.renamed
+                        // escape any double quotes in the variant name
+                        unit_variant.id.renamed.replace("\"", "\\\"")
                     )?;
                     writeln!(w)?;
                 }
@@ -533,12 +542,7 @@ impl Python {
                             dedup(&mut generic_parameters);
                             if generic_parameters.is_empty() {
                                 self.add_import("pydantic".to_string(), "BaseModel".to_string());
-                                writeln!(
-                                    w,
-                                    "class {}{}(BaseModel):",
-                                    shared.id.renamed, variant_name
-                                )
-                                .unwrap();
+                                writeln!(w, "class {class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
                                 self.add_import(
@@ -547,10 +551,8 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {}{}(GenericModel, Generic[{}]):",
+                                    "class {class_name}(GenericModel, Generic[{}]):",
                                     // note: generics is always unique (a single item)
-                                    shared.id.renamed,
-                                    variant_name,
                                     generic_parameters.join(", ")
                                 )
                                 .unwrap();
@@ -566,12 +568,7 @@ impl Python {
                             }
                             if generics.is_empty() {
                                 self.add_import("pydantic".to_string(), "BaseModel".to_string());
-                                writeln!(
-                                    w,
-                                    "class {}{}(BaseModel):",
-                                    shared.id.renamed, variant_name
-                                )
-                                .unwrap();
+                                writeln!(w, "class {class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
                                 self.add_import(
@@ -580,9 +577,7 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {}{}(GenericModel, Generic[{}]):",
-                                    shared.id.renamed,
-                                    variant_name,
+                                    "class {class_name}(GenericModel, Generic[{}]):",
                                     generics.join(", ")
                                 )
                                 .unwrap();
@@ -603,6 +598,7 @@ impl Python {
         // finally, write the enum class itself consists of a type and a union of all the enum variants
 
         writeln!(w, "class {}(BaseModel):", shared.id.renamed)?;
+        writeln!(w, "    model_config = ConfigDict(use_enum_values=True)")?;
         writeln!(w, "    {tag_key}: {}Types", shared.id.renamed)?;
         writeln!(
             w,
@@ -610,9 +606,6 @@ impl Python {
             variant_class_names.join(", ")
         )?;
         writeln!(w)?;
-        // write pydantic model config
-        writeln!(w, "    class Config:")?;
-        writeln!(w, "        use_enum_values = True")?;
         Ok(())
     }
 }

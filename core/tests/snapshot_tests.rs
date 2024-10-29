@@ -528,7 +528,8 @@ tests! {
         kotlin,
         scala,
         typescript,
-        go
+        go,
+        python
     ];
     can_override_types: [swift, kotlin, scala, typescript, go];
 
@@ -611,7 +612,7 @@ tests! {
     ];
     can_handle_serde_rename_all: [swift, kotlin, scala,  typescript, go];
     can_handle_serde_rename_on_top_level: [swift { prefix: "OP".to_string(), }, kotlin, scala,  typescript, go];
-    can_generate_unit_structs: [swift, kotlin, scala, typescript, go];
+    can_generate_unit_structs: [swift, kotlin, scala, typescript, go, python];
     kebab_case_rename: [swift, kotlin, scala,  typescript, go];
 
     /// Globals get topologically sorted
@@ -623,7 +624,7 @@ tests! {
     generate_types_with_keywords: [swift];
     // TODO: how is this different from generates_empty_structs_and_initializers?
     use_correct_decoded_variable_name: [swift, kotlin, scala,  typescript, go];
-    can_handle_unit_type: [swift { codablevoid_constraints: vec!["Equatable".into()]} , kotlin, scala,  typescript, go];
+    can_handle_unit_type: [swift { codablevoid_constraints: vec!["Equatable".into()]} , kotlin, scala,  typescript, go, python];
 
     //3 tests for adding decorators to enums and structs
     const_enum_decorator: [ swift{ prefix: "OP".to_string(), } ];
@@ -649,7 +650,7 @@ tests! {
         scala,
         go
     ];
-    can_generate_anonymous_struct_with_skipped_fields: [swift, kotlin, scala, typescript, go];
+    can_generate_anonymous_struct_with_skipped_fields: [swift, kotlin, scala, typescript, go, python];
     generic_struct_with_constraints_and_decorators: [swift { codablevoid_constraints: vec!["Equatable".into()] }];
     excluded_by_target_os: [ swift, kotlin, scala, typescript, go ] target_os: ["android", "macos"];
     // excluded_by_target_os_full_module: [swift] target_os: "ios";
