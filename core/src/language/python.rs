@@ -482,7 +482,8 @@ impl Python {
             .for_each(|v| self.add_type_var(v));
         let mut variants: Vec<(String, Vec<String>)> = Vec::new();
         self.add_import("typing".to_string(), "Union".to_string());
-        self.add_import("pydantic".to_string(), "Enum".to_string());
+        self.add_import("enum".to_string(), "Enum".to_string());
+        self.add_import("pydantic".to_string(), "ConfigDict".to_string());
         // write "types" class: a union of all the enum variants
         writeln!(w, "class {}Types(str, Enum):", shared.id.renamed)?;
         let all_enum_variants_name = shared

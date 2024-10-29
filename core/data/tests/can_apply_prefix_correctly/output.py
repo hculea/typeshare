@@ -3,7 +3,8 @@
 """
 from __future__ import annotations
 
-from pydantic import BaseModel, Enum
+from enum import Enum
+from pydantic import BaseModel
 from typing import Dict, List, Literal, Union
 
 
