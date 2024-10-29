@@ -596,8 +596,8 @@ tests! {
             uppercase_acronyms: vec!["URL".to_string()],
         },
     ];
-    test_type_alias: [ swift { prefix: "OP".to_string(), }, kotlin, scala,  typescript, go ];
-    test_optional_type_alias: [swift, kotlin, scala, typescript, go];
+    test_type_alias: [ swift { prefix: "OP".to_string(), }, kotlin, scala,  typescript, go, python ];
+    test_optional_type_alias: [swift, kotlin, scala, typescript, go, python];
     test_serialized_as: [ swift { prefix: "OP".to_string(), }, kotlin, scala,  typescript, go ];
     test_serialized_as_tuple: [
         swift {
@@ -613,7 +613,7 @@ tests! {
     can_handle_serde_rename_all: [swift, kotlin, scala,  typescript, go];
     can_handle_serde_rename_on_top_level: [swift { prefix: "OP".to_string(), }, kotlin, scala,  typescript, go];
     can_generate_unit_structs: [swift, kotlin, scala, typescript, go, python];
-    kebab_case_rename: [swift, kotlin, scala,  typescript, go];
+    kebab_case_rename: [swift, kotlin, scala,  typescript, go, python];
 
     /// Globals get topologically sorted
     orders_types: [swift, kotlin, go];

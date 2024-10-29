@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from pydantic.generics import GenericModel
 from typing import Generic, List, Literal, TypeVar, Union
 
