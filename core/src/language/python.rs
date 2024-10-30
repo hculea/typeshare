@@ -1,5 +1,7 @@
 use crate::parser::ParsedData;
-use crate::rust_types::{RustEnumShared, RustItem, RustType, RustTypeFormatError, SpecialRustType};
+use crate::rust_types::{
+    RustEnumShared, RustEnumVariantShared, RustItem, RustType, RustTypeFormatError, SpecialRustType,
+};
 use crate::topsort::topsort;
 use crate::{
     language::Language,
@@ -467,6 +469,58 @@ impl Python {
         Ok(())
     }
 
+    fn gen_variant_ctors(
+        &mut self,
+        variant_constructors: &mut Vec<String>,
+        variant_fields: &[RustField],
+        variant_shared: &RustEnumVariantShared,
+        enum_shared: &RustEnumShared,
+        class_name: &str,
+        tag_key: &str,
+        content_key: &str,
+    ) {
+        let ctor_param = variant_fields
+            .iter()
+            .map(|f| {
+                let python_field_name = python_property_aware_rename(&f.id.original);
+                let python_type = self
+                    .format_type(&f.ty, enum_shared.generic_types.as_slice())
+                    .unwrap();
+                (python_field_name, python_type)
+            })
+            .collect::<Vec<(String, String)>>();
+        variant_constructors.push(format!(
+            r#"
+    @classmethod
+    def {}(cls, {ctor_params}):
+        return cls(
+    {tag_key}={enum_name}Types.{variant_tag},
+    {content_key}={class_name}({ctor_params_names})
+	    )
+"#,
+            variant_shared.id.renamed,
+            ctor_params = ctor_param
+                .iter()
+                .map(|(name, ty)| format!("{}: {}", name, ty))
+                .collect::<Vec<String>>()
+                .join(", "),
+            content_key = content_key,
+            class_name = class_name,
+            ctor_params_names = ctor_param
+                .iter()
+                .map(|(name, _)| format!("{name} = {name}"))
+                .collect::<Vec<String>>()
+                .join(", "),
+            tag_key = tag_key,
+            enum_name = enum_shared.id.renamed,
+            variant_tag = variant_shared
+                .id
+                .renamed
+                .to_case(Case::Snake)
+                .to_uppercase(),
+        ));
+    }
+
     fn write_algebraic_enum(
         &mut self,
         tag_key: &str,
@@ -598,45 +652,15 @@ impl Python {
                 } => {
                     // writing is taken care of by write_types_for_anonymous_structs in write_enum
                     // we just need to push to the variant_constructors
-                    let ctor_param = fields
-                        .iter()
-                        .map(|f| {
-                            let python_field_name = python_property_aware_rename(&f.id.original);
-                            let python_type = self
-                                .format_type(&f.ty, shared.generic_types.as_slice())
-                                .unwrap();
-                            (python_field_name, python_type)
-                        })
-                        .collect::<Vec<(String, String)>>();
-                    variant_constructors.push(format!(
-                        r#"
-    @classmethod
-    def {}(cls, {ctor_params}):
-        return cls(
-		{tag_key}={enum_name}Types.{variant_tag},
-		{content_key}={class_name}({ctor_params_names}))
-"#,
-                        variant.shared().id.renamed,
-                        ctor_params = ctor_param
-                            .iter()
-                            .map(|(name, ty)| format!("{}: {}", name, ty))
-                            .collect::<Vec<String>>()
-                            .join(", "),
-                        content_key = content_key,
-                        class_name = class_name,
-                        ctor_params_names = ctor_param
-                            .iter()
-                            .map(|(name, _)| format!("{name} = {name}"))
-                            .collect::<Vec<String>>()
-                            .join(", "),
-                        tag_key = tag_key,
-                        enum_name = shared.id.renamed,
-                        variant_tag = variant_shared
-                            .id
-                            .renamed
-                            .to_case(Case::Snake)
-                            .to_uppercase()
-                    ));
+                    self.gen_variant_ctors(
+                        &mut variant_constructors,
+                        fields,
+                        variant_shared,
+                        shared,
+                        &class_name,
+                        tag_key,
+                        content_key,
+                    );
                 }
             }
         }
@@ -651,11 +675,13 @@ impl Python {
             variant_class_names.join(", ")
         )?;
         writeln!(w)?;
-        writeln!(
-            w,
-            "{variant_constructors}",
-            variant_constructors = variant_constructors.join("\n\n")
-        )?;
+        if !variant_constructors.is_empty() {
+            writeln!(
+                w,
+                "{variant_constructors}",
+                variant_constructors = variant_constructors.join("\n\n")
+            )?;
+        }
         Ok(())
     }
 }

@@ -37,3 +37,20 @@ class AutofilledBy(BaseModel):
     type: AutofilledByTypes
     content: Union[AutofilledByUs, AutofilledBySomethingElse]
 
+
+    @classmethod
+    def Us(cls, uuid: str):
+        return cls(
+    type=AutofilledByTypes.US,
+    content=AutofilledByUs(uuid = uuid)
+	    )
+
+
+
+    @classmethod
+    def SomethingElse(cls, uuid: str):
+        return cls(
+    type=AutofilledByTypes.SOMETHING_ELSE,
+    content=AutofilledBySomethingElse(uuid = uuid)
+	    )
+

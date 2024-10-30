@@ -47,3 +47,29 @@ class AnonymousStructWithRename(BaseModel):
     type: AnonymousStructWithRenameTypes
     content: Union[AnonymousStructWithRenameList, AnonymousStructWithRenameLongFieldNames, AnonymousStructWithRenameKebabCase]
 
+
+    @classmethod
+    def list(cls, list: List[str]):
+        return cls(
+    type=AnonymousStructWithRenameTypes.LIST,
+    content=AnonymousStructWithRenameList(list = list)
+	    )
+
+
+
+    @classmethod
+    def longFieldNames(cls, some_long_field_name: str, and_: bool, but_one_more: List[str]):
+        return cls(
+    type=AnonymousStructWithRenameTypes.LONG_FIELD_NAMES,
+    content=AnonymousStructWithRenameLongFieldNames(some_long_field_name = some_long_field_name, and_ = and_, but_one_more = but_one_more)
+	    )
+
+
+
+    @classmethod
+    def kebabCase(cls, another_list: List[str], camel_case_string_field: str, something_else: bool):
+        return cls(
+    type=AnonymousStructWithRenameTypes.KEBAB_CASE,
+    content=AnonymousStructWithRenameKebabCase(another_list = another_list, camel_case_string_field = camel_case_string_field, something_else = something_else)
+	    )
+

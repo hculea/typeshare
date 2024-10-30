@@ -93,3 +93,38 @@ class GenericEnumsUsingStructVariants(BaseModel):
     type: GenericEnumsUsingStructVariantsTypes
     content: Union[GenericEnumsUsingStructVariantsVariantF, GenericEnumsUsingStructVariantsVariantG, GenericEnumsUsingStructVariantsVariantH, GenericEnumsUsingStructVariantsVariantI]
 
+
+    @classmethod
+    def VariantF(cls, action: T):
+        return cls(
+    type=GenericEnumsUsingStructVariantsTypes.VARIANT_F,
+    content=GenericEnumsUsingStructVariantsVariantF(action = action)
+	    )
+
+
+
+    @classmethod
+    def VariantG(cls, action: T, response: U):
+        return cls(
+    type=GenericEnumsUsingStructVariantsTypes.VARIANT_G,
+    content=GenericEnumsUsingStructVariantsVariantG(action = action, response = response)
+	    )
+
+
+
+    @classmethod
+    def VariantH(cls, non_generic: int):
+        return cls(
+    type=GenericEnumsUsingStructVariantsTypes.VARIANT_H,
+    content=GenericEnumsUsingStructVariantsVariantH(non_generic = non_generic)
+	    )
+
+
+
+    @classmethod
+    def VariantI(cls, vec: List[T], action: MyType[T, U]):
+        return cls(
+    type=GenericEnumsUsingStructVariantsTypes.VARIANT_I,
+    content=GenericEnumsUsingStructVariantsVariantI(vec = vec, action = action)
+	    )
+

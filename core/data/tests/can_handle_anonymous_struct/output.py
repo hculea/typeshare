@@ -41,6 +41,23 @@ class AutofilledBy(BaseModel):
     type: AutofilledByTypes
     content: Union[AutofilledByUs, AutofilledBySomethingElse]
 
+
+    @classmethod
+    def Us(cls, uuid: str):
+        return cls(
+    type=AutofilledByTypes.US,
+    content=AutofilledByUs(uuid = uuid)
+	    )
+
+
+
+    @classmethod
+    def SomethingElse(cls, uuid: str, thing: int):
+        return cls(
+    type=AutofilledByTypes.SOMETHING_ELSE,
+    content=AutofilledBySomethingElse(uuid = uuid, thing = thing)
+	    )
+
 class EnumWithManyVariantsAnonVariant(BaseModel):
     """
     Generated type representing the anonymous struct variant `AnonVariant` of the `EnumWithManyVariants` Rust enum
@@ -80,4 +97,21 @@ class EnumWithManyVariants(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: EnumWithManyVariantsTypes
     content: Union[EnumWithManyVariantsUnitVariant, EnumWithManyVariantsTupleVariantString, EnumWithManyVariantsAnonVariant, EnumWithManyVariantsTupleVariantInt, EnumWithManyVariantsAnotherUnitVariant, EnumWithManyVariantsAnotherAnonVariant]
+
+
+    @classmethod
+    def AnonVariant(cls, uuid: str):
+        return cls(
+    type=EnumWithManyVariantsTypes.ANON_VARIANT,
+    content=EnumWithManyVariantsAnonVariant(uuid = uuid)
+	    )
+
+
+
+    @classmethod
+    def AnotherAnonVariant(cls, uuid: str, thing: int):
+        return cls(
+    type=EnumWithManyVariantsTypes.ANOTHER_ANON_VARIANT,
+    content=EnumWithManyVariantsAnotherAnonVariant(uuid = uuid, thing = thing)
+	    )
 
