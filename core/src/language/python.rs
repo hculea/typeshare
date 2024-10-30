@@ -430,20 +430,6 @@ impl Python {
         self.type_variables.insert(name);
     }
 
-    fn get_type_vars(&mut self, n: usize) -> Vec<String> {
-        let vars: Vec<String> = (0..n)
-            .map(|i| {
-                if i == 0 {
-                    "T".to_string()
-                } else {
-                    format!("T{}", i)
-                }
-            })
-            .collect();
-        vars.iter().for_each(|tv| self.add_type_var(tv.clone()));
-        vars
-    }
-
     fn write_all_imports(&self, w: &mut dyn Write) -> std::io::Result<()> {
         let mut type_var_names: Vec<String> = self.type_variables.iter().cloned().collect();
         type_var_names.sort();
@@ -825,7 +811,7 @@ mod test {
 
     use crate::{
         parser::parse_enum,
-        rust_types::{Id, RustEnumShared, RustEnumVariantShared},
+        rust_types::Id,
     };
 
     use super::*;
