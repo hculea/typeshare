@@ -488,10 +488,9 @@ impl Python {
     @classmethod
     def {method_name}(cls) -> {class_name}:
         return cls(
-        {tag_key}={enum_name}Types.{variant_tag},
-        {content_key}=None
-	    )
-        "#,
+            {tag_key}={enum_name}Types.{variant_tag},
+            {content_key}=None
+	    )"#,
             tag_key = tag_key,
             content_key = content_key,
             enum_name = enum_shared.id.renamed,
@@ -520,14 +519,13 @@ impl Python {
         .to_case(Case::Snake);
 
         variant_constructors.push(format!(
-            r#"    
+            r#"
     @classmethod
     def {method_name}(cls, {content_key} : {param_type}):
         return cls(
             {tag_key}={enum_name}Types.{variant_tag},
             {content_key}={content_key}
-        )
-"#,
+        )"#,
             enum_name = enum_shared.id.renamed,
             variant_tag = variant_shared
                 .id
@@ -569,10 +567,9 @@ impl Python {
     @classmethod
     def {method_name}(cls, {ctor_params}):
         return cls(
-    {tag_key}={enum_name}Types.{variant_tag},
-    {content_key}={class_name}({ctor_params_names})
-	    )
-"#,
+            {tag_key}={enum_name}Types.{variant_tag},
+            {content_key}={class_name}({ctor_params_names})
+	    )"#,
             ctor_params = ctor_param
                 .iter()
                 .map(|(name, ty)| format!("{}: {}", name, ty))

@@ -41,16 +41,14 @@ class AutofilledBy(BaseModel):
     @classmethod
     def new_autofilled_by_us(cls, uuid: str):
         return cls(
-    type=AutofilledByTypes.US,
-    content=AutofilledByUs(uuid = uuid)
+            type=AutofilledByTypes.US,
+            content=AutofilledByUs(uuid = uuid)
 	    )
-
 
 
     @classmethod
     def new_autofilled_by_something_else(cls, uuid: str):
         return cls(
-    type=AutofilledByTypes.SOMETHING_ELSE,
-    content=AutofilledBySomethingElse(uuid = uuid)
+            type=AutofilledByTypes.SOMETHING_ELSE,
+            content=AutofilledBySomethingElse(uuid = uuid)
 	    )
-

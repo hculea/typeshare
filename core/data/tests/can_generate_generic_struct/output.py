@@ -47,7 +47,7 @@ class EnumUsingGenericStruct(BaseModel):
     type: EnumUsingGenericStructTypes
     content: Union[EnumUsingGenericStructVariantA, EnumUsingGenericStructVariantB, EnumUsingGenericStructVariantC, EnumUsingGenericStructVariantD]
 
-    
+
     @classmethod
     def new_enum_using_generic_struct_variant_a(cls, content : EnumUsingGenericStructVariantA):
         return cls(
@@ -56,7 +56,6 @@ class EnumUsingGenericStruct(BaseModel):
         )
 
 
-    
     @classmethod
     def new_enum_using_generic_struct_variant_b(cls, content : EnumUsingGenericStructVariantB):
         return cls(
@@ -65,7 +64,6 @@ class EnumUsingGenericStruct(BaseModel):
         )
 
 
-    
     @classmethod
     def new_enum_using_generic_struct_variant_c(cls, content : EnumUsingGenericStructVariantC):
         return cls(
@@ -74,11 +72,9 @@ class EnumUsingGenericStruct(BaseModel):
         )
 
 
-    
     @classmethod
     def new_enum_using_generic_struct_variant_d(cls, content : EnumUsingGenericStructVariantD):
         return cls(
             type=EnumUsingGenericStructTypes.VARIANT_D,
             content=content
         )
-

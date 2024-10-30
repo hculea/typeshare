@@ -41,7 +41,7 @@ class AdvancedColors(BaseModel):
     type: AdvancedColorsTypes
     content: Union[AdvancedColorsString, AdvancedColorsNumber, AdvancedColorsUnsignedNumber, AdvancedColorsNumberArray, AdvancedColorsReallyCoolType]
 
-    
+
     @classmethod
     def new_advanced_colors_string(cls, content : AdvancedColorsString):
         return cls(
@@ -50,7 +50,6 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_number(cls, content : AdvancedColorsNumber):
         return cls(
@@ -59,7 +58,6 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_unsigned_number(cls, content : AdvancedColorsUnsignedNumber):
         return cls(
@@ -68,7 +66,6 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_number_array(cls, content : AdvancedColorsNumberArray):
         return cls(
@@ -77,14 +74,12 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_really_cool_type(cls, content : AdvancedColorsReallyCoolType):
         return cls(
             type=AdvancedColorsTypes.REALLY_COOL_TYPE,
             content=content
         )
-
 class AdvancedColors2Types(str, Enum):
     STRING = "string"
     NUMBER = "number"
@@ -108,7 +103,7 @@ class AdvancedColors2(BaseModel):
     type: AdvancedColors2Types
     content: Union[AdvancedColors2String, AdvancedColors2Number, AdvancedColors2NumberArray, AdvancedColors2ReallyCoolType]
 
-    
+
     @classmethod
     def new_advanced_colors_2_string(cls, content : AdvancedColors2String):
         return cls(
@@ -117,7 +112,6 @@ class AdvancedColors2(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_2_number(cls, content : AdvancedColors2Number):
         return cls(
@@ -126,7 +120,6 @@ class AdvancedColors2(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_2_number_array(cls, content : AdvancedColors2NumberArray):
         return cls(
@@ -135,11 +128,9 @@ class AdvancedColors2(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_2_really_cool_type(cls, content : AdvancedColors2ReallyCoolType):
         return cls(
             type=AdvancedColors2Types.REALLY_COOL_TYPE,
             content=content
         )
-

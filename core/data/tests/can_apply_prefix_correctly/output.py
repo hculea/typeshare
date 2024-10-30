@@ -43,7 +43,7 @@ class AdvancedColors(BaseModel):
     t: AdvancedColorsTypes
     c: Union[AdvancedColorsString, AdvancedColorsNumber, AdvancedColorsNumberArray, AdvancedColorsReallyCoolType, AdvancedColorsArrayReallyCoolType, AdvancedColorsDictionaryReallyCoolType]
 
-    
+
     @classmethod
     def new_advanced_colors_string(cls, c : AdvancedColorsString):
         return cls(
@@ -52,7 +52,6 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_number(cls, c : AdvancedColorsNumber):
         return cls(
@@ -61,7 +60,6 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_number_array(cls, c : AdvancedColorsNumberArray):
         return cls(
@@ -70,7 +68,6 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_really_cool_type(cls, c : AdvancedColorsReallyCoolType):
         return cls(
@@ -79,7 +76,6 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_array_really_cool_type(cls, c : AdvancedColorsArrayReallyCoolType):
         return cls(
@@ -88,11 +84,9 @@ class AdvancedColors(BaseModel):
         )
 
 
-    
     @classmethod
     def new_advanced_colors_dictionary_really_cool_type(cls, c : AdvancedColorsDictionaryReallyCoolType):
         return cls(
             t=AdvancedColorsTypes.DICTIONARY_REALLY_COOL_TYPE,
             c=c
         )
-

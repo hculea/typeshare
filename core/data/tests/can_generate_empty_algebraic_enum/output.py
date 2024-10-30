@@ -26,7 +26,7 @@ class Address(BaseModel):
     type: AddressTypes
     content: Union[AddressFixedAddress, AddressNoFixedAddress, None]
 
-    
+
     @classmethod
     def new_address_fixed_address(cls, content : AddressFixedAddress):
         return cls(
@@ -35,11 +35,9 @@ class Address(BaseModel):
         )
 
 
-
     @classmethod
     def new_address_no_fixed_address(cls) -> Address:
         return cls(
-        type=AddressTypes.NO_FIXED_ADDRESS,
-        content=None
+            type=AddressTypes.NO_FIXED_ADDRESS,
+            content=None
 	    )
-        

@@ -29,7 +29,7 @@ class GenericEnum(BaseModel):
     type: GenericEnumTypes
     content: Union[GenericEnumVariantA, GenericEnumVariantB]
 
-    
+
     @classmethod
     def new_generic_enum_variant_a(cls, content : GenericEnumVariantA):
         return cls(
@@ -38,14 +38,12 @@ class GenericEnum(BaseModel):
         )
 
 
-    
     @classmethod
     def new_generic_enum_variant_b(cls, content : GenericEnumVariantB):
         return cls(
             type=GenericEnumTypes.VARIANT_B,
             content=content
         )
-
 class StructUsingGenericEnum(BaseModel):
     enum_field: GenericEnum[str, int]
 
@@ -69,7 +67,7 @@ class GenericEnumUsingGenericEnum(BaseModel):
     type: GenericEnumUsingGenericEnumTypes
     content: Union[GenericEnumUsingGenericEnumVariantC, GenericEnumUsingGenericEnumVariantD, GenericEnumUsingGenericEnumVariantE]
 
-    
+
     @classmethod
     def new_generic_enum_using_generic_enum_variant_c(cls, content : GenericEnumUsingGenericEnumVariantC):
         return cls(
@@ -78,7 +76,6 @@ class GenericEnumUsingGenericEnum(BaseModel):
         )
 
 
-    
     @classmethod
     def new_generic_enum_using_generic_enum_variant_d(cls, content : GenericEnumUsingGenericEnumVariantD):
         return cls(
@@ -87,14 +84,12 @@ class GenericEnumUsingGenericEnum(BaseModel):
         )
 
 
-    
     @classmethod
     def new_generic_enum_using_generic_enum_variant_e(cls, content : GenericEnumUsingGenericEnumVariantE):
         return cls(
             type=GenericEnumUsingGenericEnumTypes.VARIANT_E,
             content=content
         )
-
 class GenericEnumsUsingStructVariantsVariantF(GenericModel, Generic[T]):
     """
     Generated type representing the anonymous struct variant `VariantF` of the `GenericEnumsUsingStructVariants` Rust enum
@@ -140,34 +135,30 @@ class GenericEnumsUsingStructVariants(BaseModel):
     @classmethod
     def new_generic_enums_using_struct_variants_variant_f(cls, action: T):
         return cls(
-    type=GenericEnumsUsingStructVariantsTypes.VARIANT_F,
-    content=GenericEnumsUsingStructVariantsVariantF(action = action)
+            type=GenericEnumsUsingStructVariantsTypes.VARIANT_F,
+            content=GenericEnumsUsingStructVariantsVariantF(action = action)
 	    )
-
 
 
     @classmethod
     def new_generic_enums_using_struct_variants_variant_g(cls, action: T, response: U):
         return cls(
-    type=GenericEnumsUsingStructVariantsTypes.VARIANT_G,
-    content=GenericEnumsUsingStructVariantsVariantG(action = action, response = response)
+            type=GenericEnumsUsingStructVariantsTypes.VARIANT_G,
+            content=GenericEnumsUsingStructVariantsVariantG(action = action, response = response)
 	    )
-
 
 
     @classmethod
     def new_generic_enums_using_struct_variants_variant_h(cls, non_generic: int):
         return cls(
-    type=GenericEnumsUsingStructVariantsTypes.VARIANT_H,
-    content=GenericEnumsUsingStructVariantsVariantH(non_generic = non_generic)
+            type=GenericEnumsUsingStructVariantsTypes.VARIANT_H,
+            content=GenericEnumsUsingStructVariantsVariantH(non_generic = non_generic)
 	    )
-
 
 
     @classmethod
     def new_generic_enums_using_struct_variants_variant_i(cls, vec: List[T], action: MyType[T, U]):
         return cls(
-    type=GenericEnumsUsingStructVariantsTypes.VARIANT_I,
-    content=GenericEnumsUsingStructVariantsVariantI(vec = vec, action = action)
+            type=GenericEnumsUsingStructVariantsTypes.VARIANT_I,
+            content=GenericEnumsUsingStructVariantsVariantI(vec = vec, action = action)
 	    )
-

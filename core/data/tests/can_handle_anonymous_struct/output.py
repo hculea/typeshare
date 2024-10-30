@@ -45,19 +45,17 @@ class AutofilledBy(BaseModel):
     @classmethod
     def new_autofilled_by_us(cls, uuid: str):
         return cls(
-    type=AutofilledByTypes.US,
-    content=AutofilledByUs(uuid = uuid)
+            type=AutofilledByTypes.US,
+            content=AutofilledByUs(uuid = uuid)
 	    )
-
 
 
     @classmethod
     def new_autofilled_by_something_else(cls, uuid: str, thing: int):
         return cls(
-    type=AutofilledByTypes.SOMETHING_ELSE,
-    content=AutofilledBySomethingElse(uuid = uuid, thing = thing)
+            type=AutofilledByTypes.SOMETHING_ELSE,
+            content=AutofilledBySomethingElse(uuid = uuid, thing = thing)
 	    )
-
 class EnumWithManyVariantsAnonVariant(BaseModel):
     """
     Generated type representing the anonymous struct variant `AnonVariant` of the `EnumWithManyVariants` Rust enum
@@ -102,12 +100,11 @@ class EnumWithManyVariants(BaseModel):
     @classmethod
     def new_enum_with_many_variants_unit_variant(cls) -> EnumWithManyVariants:
         return cls(
-        type=EnumWithManyVariantsTypes.UNIT_VARIANT,
-        content=None
+            type=EnumWithManyVariantsTypes.UNIT_VARIANT,
+            content=None
 	    )
-        
 
-    
+
     @classmethod
     def new_enum_with_many_variants_tuple_variant_string(cls, content : EnumWithManyVariantsTupleVariantString):
         return cls(
@@ -116,16 +113,14 @@ class EnumWithManyVariants(BaseModel):
         )
 
 
-
     @classmethod
     def new_enum_with_many_variants_anon_variant(cls, uuid: str):
         return cls(
-    type=EnumWithManyVariantsTypes.ANON_VARIANT,
-    content=EnumWithManyVariantsAnonVariant(uuid = uuid)
+            type=EnumWithManyVariantsTypes.ANON_VARIANT,
+            content=EnumWithManyVariantsAnonVariant(uuid = uuid)
 	    )
 
 
-    
     @classmethod
     def new_enum_with_many_variants_tuple_variant_int(cls, content : EnumWithManyVariantsTupleVariantInt):
         return cls(
@@ -134,20 +129,17 @@ class EnumWithManyVariants(BaseModel):
         )
 
 
-
     @classmethod
     def new_enum_with_many_variants_another_unit_variant(cls) -> EnumWithManyVariants:
         return cls(
-        type=EnumWithManyVariantsTypes.ANOTHER_UNIT_VARIANT,
-        content=None
+            type=EnumWithManyVariantsTypes.ANOTHER_UNIT_VARIANT,
+            content=None
 	    )
-        
 
 
     @classmethod
     def new_enum_with_many_variants_another_anon_variant(cls, uuid: str, thing: int):
         return cls(
-    type=EnumWithManyVariantsTypes.ANOTHER_ANON_VARIANT,
-    content=EnumWithManyVariantsAnotherAnonVariant(uuid = uuid, thing = thing)
+            type=EnumWithManyVariantsTypes.ANOTHER_ANON_VARIANT,
+            content=EnumWithManyVariantsAnotherAnonVariant(uuid = uuid, thing = thing)
 	    )
-

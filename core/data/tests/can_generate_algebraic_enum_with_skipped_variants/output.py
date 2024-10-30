@@ -27,16 +27,14 @@ class SomeEnum(BaseModel):
     @classmethod
     def new_some_enum_a(cls) -> SomeEnum:
         return cls(
-        type=SomeEnumTypes.A,
-        content=None
+            type=SomeEnumTypes.A,
+            content=None
 	    )
-        
 
-    
+
     @classmethod
     def new_some_enum_c(cls, content : SomeEnumC):
         return cls(
             type=SomeEnumTypes.C,
             content=content
         )
-
