@@ -3,8 +3,11 @@
 """
 from __future__ import annotations
 
-from typing import Literal
+from enum import Enum
 
 
-Colors = Literal["red", "blue", "green-like"]
+class Colors(Enum):
+    RED = "red",
+    BLUE = "blue",
+    GREEN = "green-like"
 

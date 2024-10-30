@@ -275,27 +275,31 @@ impl Language for Python {
             // Write all the unit variants out (there can only be unit variants in
             // this case)
             RustEnum::Unit(shared) => {
-                self.add_import("typing".to_string(), "Literal".to_string());
-                write!(
-                    w,
-                    "{} = Literal[{}]",
-                    shared.id.renamed,
+                self.add_import("enum".to_string(), "Enum".to_string());
+                writeln!(w, "class {}(Enum):", shared.id.renamed)?;
+
+                let fields = if shared.variants.is_empty() {
+                    "    pass".to_string()
+                } else {
                     shared
                         .variants
                         .iter()
-                        .map(|v| format!(
-                            "\"{}\"",
-                            match v {
-                                RustEnumVariant::Unit(v) => {
-                                    v.id.renamed.replace("\"", "\\\"")
+                        .map(|v| {
+                            format!(
+                                "    {} = \"{}\"",
+                                v.shared().id.original.to_uppercase(),
+                                match v {
+                                    RustEnumVariant::Unit(v) => {
+                                        v.id.renamed.replace("\"", "\\\"")
+                                    }
+                                    _ => panic!(),
                                 }
-                                _ => panic!(),
-                            }
-                        ))
+                            )
+                        })
                         .collect::<Vec<String>>()
-                        .join(", ")
-                )?;
-                write!(w, "\n\n")?;
+                        .join(",\n")
+                };
+                writeln!(w, "{fields}\n")?;
             }
             // Write all the algebraic variants out (all three variant types are possible
             // here)
@@ -353,7 +357,7 @@ impl Python {
             python_type = format!("Optional[{}]", python_type);
             self.add_import("typing".to_string(), "Optional".to_string());
         }
-        python_type = match python_field_name == field.id.renamed {
+        python_type = match field.id.original == field.id.renamed {
             true => python_type,
             false => {
                 self.add_import("typing".to_string(), "Annotated".to_string());
