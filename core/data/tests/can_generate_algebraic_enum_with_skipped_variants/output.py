@@ -21,5 +21,22 @@ class SomeEnumC(BaseModel):
 class SomeEnum(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: SomeEnumTypes
-    content: Union[SomeEnumA, SomeEnumC]
+    content: Union[SomeEnumA, SomeEnumC, None]
+
+
+    @classmethod
+    def new_some_enum_a(cls) -> SomeEnum:
+        return cls(
+        type=SomeEnumTypes.A,
+        content=None
+	    )
+        
+
+    
+    @classmethod
+    def new_some_enum_c(cls, content : SomeEnumC):
+        return cls(
+            type=SomeEnumTypes.C,
+            content=content
+        )
 

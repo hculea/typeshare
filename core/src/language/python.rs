@@ -469,6 +469,75 @@ impl Python {
         Ok(())
     }
 
+    fn gen_unit_variant_ctor(
+        &mut self,
+        variant_constructors: &mut Vec<String>,
+        variant_shared: &RustEnumVariantShared,
+        enum_shared: &RustEnumShared,
+        tag_key: &str,
+        content_key: &str,
+    ) {
+        let method_name = format!(
+            "new_{}_{}",
+            enum_shared.id.renamed, variant_shared.id.renamed
+        )
+        .to_case(Case::Snake);
+
+        variant_constructors.push(format!(
+            r#"
+    @classmethod
+    def {method_name}(cls) -> {class_name}:
+        return cls(
+        {tag_key}={enum_name}Types.{variant_tag},
+        {content_key}=None
+	    )
+        "#,
+            tag_key = tag_key,
+            content_key = content_key,
+            enum_name = enum_shared.id.renamed,
+            variant_tag = variant_shared
+                .id
+                .renamed
+                .to_case(Case::Snake)
+                .to_uppercase(),
+            class_name = enum_shared.id.renamed,
+        ));
+    }
+
+    fn gen_tuple_variant_ctor(
+        &mut self,
+        variant_constructors: &mut Vec<String>,
+        variant_shared: &RustEnumVariantShared,
+        enum_shared: &RustEnumShared,
+        param_type: String,
+        tag_key: &str,
+        content_key: &str,
+    ) {
+        let method_name = format!(
+            "new_{}_{}",
+            enum_shared.id.renamed, variant_shared.id.renamed
+        )
+        .to_case(Case::Snake);
+
+        variant_constructors.push(format!(
+            r#"    
+    @classmethod
+    def {method_name}(cls, {content_key} : {param_type}):
+        return cls(
+            {tag_key}={enum_name}Types.{variant_tag},
+            {content_key}={content_key}
+        )
+"#,
+            enum_name = enum_shared.id.renamed,
+            variant_tag = variant_shared
+                .id
+                .renamed
+                .to_case(Case::Snake)
+                .to_uppercase(),
+        ));
+    }
+
+    #[allow(clippy::too_many_arguments)]
     fn gen_variant_ctors(
         &mut self,
         variant_constructors: &mut Vec<String>,
@@ -479,6 +548,12 @@ impl Python {
         tag_key: &str,
         content_key: &str,
     ) {
+        let method_name = format!(
+            "new_{}_{}",
+            enum_shared.id.renamed, variant_shared.id.renamed
+        )
+        .to_case(Case::Snake);
+
         let ctor_param = variant_fields
             .iter()
             .map(|f| {
@@ -492,13 +567,12 @@ impl Python {
         variant_constructors.push(format!(
             r#"
     @classmethod
-    def {}(cls, {ctor_params}):
+    def {method_name}(cls, {ctor_params}):
         return cls(
     {tag_key}={enum_name}Types.{variant_tag},
     {content_key}={class_name}({ctor_params_names})
 	    )
 "#,
-            variant_shared.id.renamed,
             ctor_params = ctor_param
                 .iter()
                 .map(|(name, ty)| format!("{}: {}", name, ty))
@@ -566,27 +640,48 @@ impl Python {
 
         let mut variant_class_names = vec![];
         let mut variant_constructors = vec![];
+        let mut contains_unit_variant = false;
         // write each of the enum variant as a class:
         for variant in &shared.variants {
-            let class_name = make_struct_name(&variant.shared().id.original);
-            variant_class_names.push(class_name.clone());
+            let variant_class_name = make_struct_name(&variant.shared().id.original);
+            variant_class_names.push(variant_class_name.clone());
 
             match variant {
                 RustEnumVariant::Unit(unit_variant) => {
+                    contains_unit_variant = true;
+
                     self.add_import("typing".to_string(), "Literal".to_string());
                     let variant_name = format!("{}{}", shared.id.renamed, unit_variant.id.renamed);
                     variants.push((variant_name.clone(), vec![]));
-                    writeln!(w, "class {class_name}(BaseModel):")?;
+                    writeln!(w, "class {variant_class_name}(BaseModel):")?;
                     writeln!(
                         w,
                         "    {content_key} = Literal[\"{}\"]",
                         // escape any double quotes in the variant name
                         unit_variant.id.renamed.replace("\"", "\\\"")
                     )?;
+                    self.gen_unit_variant_ctor(
+                        &mut variant_constructors,
+                        unit_variant,
+                        shared,
+                        tag_key,
+                        content_key,
+                    );
                     writeln!(w)?;
                 }
-                RustEnumVariant::Tuple { ty, .. } => {
+                RustEnumVariant::Tuple {
+                    ty,
+                    shared: variant_shared,
+                } => {
                     self.add_import("typing".to_string(), "Literal".to_string());
+                    self.gen_tuple_variant_ctor(
+                        &mut variant_constructors,
+                        variant_shared,
+                        shared,
+                        variant_class_name.clone(),
+                        tag_key,
+                        content_key,
+                    );
                     match ty {
                         RustType::Generic { parameters, .. } => {
                             let mut generic_parameters: Vec<String> = parameters
@@ -598,7 +693,7 @@ impl Python {
                             dedup(&mut generic_parameters);
                             if generic_parameters.is_empty() {
                                 self.add_import("pydantic".to_string(), "BaseModel".to_string());
-                                writeln!(w, "class {class_name}(BaseModel):",).unwrap();
+                                writeln!(w, "class {variant_class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
                                 self.add_import(
@@ -607,7 +702,7 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {class_name}(GenericModel, Generic[{}]):",
+                                    "class {variant_class_name}(GenericModel, Generic[{}]):",
                                     // note: generics is always unique (a single item)
                                     generic_parameters.join(", ")
                                 )
@@ -624,7 +719,7 @@ impl Python {
                             }
                             if generics.is_empty() {
                                 self.add_import("pydantic".to_string(), "BaseModel".to_string());
-                                writeln!(w, "class {class_name}(BaseModel):",).unwrap();
+                                writeln!(w, "class {variant_class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
                                 self.add_import(
@@ -633,7 +728,7 @@ impl Python {
                                 );
                                 writeln!(
                                     w,
-                                    "class {class_name}(GenericModel, Generic[{}]):",
+                                    "class {variant_class_name}(GenericModel, Generic[{}]):",
                                     generics.join(", ")
                                 )
                                 .unwrap();
@@ -657,13 +752,17 @@ impl Python {
                         fields,
                         variant_shared,
                         shared,
-                        &class_name,
+                        &variant_class_name,
                         tag_key,
                         content_key,
                     );
                 }
             }
         }
+        if contains_unit_variant {
+            variant_class_names.push("None".to_string());
+        }
+
         // finally, write the enum class itself consists of a type and a union of all the enum variants
 
         writeln!(w, "class {}(BaseModel):", shared.id.renamed)?;

@@ -28,3 +28,11 @@ class EnumHasVoidType(BaseModel):
     type: EnumHasVoidTypeTypes
     content: Union[EnumHasVoidTypeHasAUnit]
 
+    
+    @classmethod
+    def new_enum_has_void_type_has_a_unit(cls, content : EnumHasVoidTypeHasAUnit):
+        return cls(
+            type=EnumHasVoidTypeTypes.HAS_A_UNIT,
+            content=content
+        )
+

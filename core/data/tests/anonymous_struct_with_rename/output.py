@@ -49,7 +49,7 @@ class AnonymousStructWithRename(BaseModel):
 
 
     @classmethod
-    def list(cls, list: List[str]):
+    def new_anonymous_struct_with_rename_list(cls, list: List[str]):
         return cls(
     type=AnonymousStructWithRenameTypes.LIST,
     content=AnonymousStructWithRenameList(list = list)
@@ -58,7 +58,7 @@ class AnonymousStructWithRename(BaseModel):
 
 
     @classmethod
-    def longFieldNames(cls, some_long_field_name: str, and_: bool, but_one_more: List[str]):
+    def new_anonymous_struct_with_rename_long_field_names(cls, some_long_field_name: str, and_: bool, but_one_more: List[str]):
         return cls(
     type=AnonymousStructWithRenameTypes.LONG_FIELD_NAMES,
     content=AnonymousStructWithRenameLongFieldNames(some_long_field_name = some_long_field_name, and_ = and_, but_one_more = but_one_more)
@@ -67,7 +67,7 @@ class AnonymousStructWithRename(BaseModel):
 
 
     @classmethod
-    def kebabCase(cls, another_list: List[str], camel_case_string_field: str, something_else: bool):
+    def new_anonymous_struct_with_rename_kebab_case(cls, another_list: List[str], camel_case_string_field: str, something_else: bool):
         return cls(
     type=AnonymousStructWithRenameTypes.KEBAB_CASE,
     content=AnonymousStructWithRenameKebabCase(another_list = another_list, camel_case_string_field = camel_case_string_field, something_else = something_else)

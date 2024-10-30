@@ -24,5 +24,22 @@ class AddressNoFixedAddress(BaseModel):
 class Address(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: AddressTypes
-    content: Union[AddressFixedAddress, AddressNoFixedAddress]
+    content: Union[AddressFixedAddress, AddressNoFixedAddress, None]
 
+    
+    @classmethod
+    def new_address_fixed_address(cls, content : AddressFixedAddress):
+        return cls(
+            type=AddressTypes.FIXED_ADDRESS,
+            content=content
+        )
+
+
+
+    @classmethod
+    def new_address_no_fixed_address(cls) -> Address:
+        return cls(
+        type=AddressTypes.NO_FIXED_ADDRESS,
+        content=None
+	    )
+        

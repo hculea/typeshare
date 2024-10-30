@@ -29,6 +29,23 @@ class GenericEnum(BaseModel):
     type: GenericEnumTypes
     content: Union[GenericEnumVariantA, GenericEnumVariantB]
 
+    
+    @classmethod
+    def new_generic_enum_variant_a(cls, content : GenericEnumVariantA):
+        return cls(
+            type=GenericEnumTypes.VARIANT_A,
+            content=content
+        )
+
+
+    
+    @classmethod
+    def new_generic_enum_variant_b(cls, content : GenericEnumVariantB):
+        return cls(
+            type=GenericEnumTypes.VARIANT_B,
+            content=content
+        )
+
 class StructUsingGenericEnum(BaseModel):
     enum_field: GenericEnum[str, int]
 
@@ -51,6 +68,32 @@ class GenericEnumUsingGenericEnum(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: GenericEnumUsingGenericEnumTypes
     content: Union[GenericEnumUsingGenericEnumVariantC, GenericEnumUsingGenericEnumVariantD, GenericEnumUsingGenericEnumVariantE]
+
+    
+    @classmethod
+    def new_generic_enum_using_generic_enum_variant_c(cls, content : GenericEnumUsingGenericEnumVariantC):
+        return cls(
+            type=GenericEnumUsingGenericEnumTypes.VARIANT_C,
+            content=content
+        )
+
+
+    
+    @classmethod
+    def new_generic_enum_using_generic_enum_variant_d(cls, content : GenericEnumUsingGenericEnumVariantD):
+        return cls(
+            type=GenericEnumUsingGenericEnumTypes.VARIANT_D,
+            content=content
+        )
+
+
+    
+    @classmethod
+    def new_generic_enum_using_generic_enum_variant_e(cls, content : GenericEnumUsingGenericEnumVariantE):
+        return cls(
+            type=GenericEnumUsingGenericEnumTypes.VARIANT_E,
+            content=content
+        )
 
 class GenericEnumsUsingStructVariantsVariantF(GenericModel, Generic[T]):
     """
@@ -95,7 +138,7 @@ class GenericEnumsUsingStructVariants(BaseModel):
 
 
     @classmethod
-    def VariantF(cls, action: T):
+    def new_generic_enums_using_struct_variants_variant_f(cls, action: T):
         return cls(
     type=GenericEnumsUsingStructVariantsTypes.VARIANT_F,
     content=GenericEnumsUsingStructVariantsVariantF(action = action)
@@ -104,7 +147,7 @@ class GenericEnumsUsingStructVariants(BaseModel):
 
 
     @classmethod
-    def VariantG(cls, action: T, response: U):
+    def new_generic_enums_using_struct_variants_variant_g(cls, action: T, response: U):
         return cls(
     type=GenericEnumsUsingStructVariantsTypes.VARIANT_G,
     content=GenericEnumsUsingStructVariantsVariantG(action = action, response = response)
@@ -113,7 +156,7 @@ class GenericEnumsUsingStructVariants(BaseModel):
 
 
     @classmethod
-    def VariantH(cls, non_generic: int):
+    def new_generic_enums_using_struct_variants_variant_h(cls, non_generic: int):
         return cls(
     type=GenericEnumsUsingStructVariantsTypes.VARIANT_H,
     content=GenericEnumsUsingStructVariantsVariantH(non_generic = non_generic)
@@ -122,7 +165,7 @@ class GenericEnumsUsingStructVariants(BaseModel):
 
 
     @classmethod
-    def VariantI(cls, vec: List[T], action: MyType[T, U]):
+    def new_generic_enums_using_struct_variants_variant_i(cls, vec: List[T], action: MyType[T, U]):
         return cls(
     type=GenericEnumsUsingStructVariantsTypes.VARIANT_I,
     content=GenericEnumsUsingStructVariantsVariantI(vec = vec, action = action)
