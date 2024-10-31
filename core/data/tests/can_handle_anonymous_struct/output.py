@@ -79,8 +79,6 @@ class EnumWithManyVariantsTypes(str, Enum):
     ANOTHER_UNIT_VARIANT = "AnotherUnitVariant"
     ANOTHER_ANON_VARIANT = "AnotherAnonVariant"
 
-class EnumWithManyVariantsUnitVariant(BaseModel):
-    pass
 
 class EnumWithManyVariantsTupleVariantString(BaseModel):
     content: str
@@ -88,13 +86,11 @@ class EnumWithManyVariantsTupleVariantString(BaseModel):
 class EnumWithManyVariantsTupleVariantInt(BaseModel):
     content: int
 
-class EnumWithManyVariantsAnotherUnitVariant(BaseModel):
-    pass
 
 class EnumWithManyVariants(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: EnumWithManyVariantsTypes
-    content: Union[EnumWithManyVariantsUnitVariant, EnumWithManyVariantsTupleVariantString, EnumWithManyVariantsAnonVariant, EnumWithManyVariantsTupleVariantInt, EnumWithManyVariantsAnotherUnitVariant, EnumWithManyVariantsAnotherAnonVariant, None]
+    content: Union[EnumWithManyVariantsTupleVariantString, EnumWithManyVariantsAnonVariant, EnumWithManyVariantsTupleVariantInt, EnumWithManyVariantsAnotherAnonVariant, None]
 
 
     @classmethod

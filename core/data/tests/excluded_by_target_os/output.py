@@ -57,19 +57,13 @@ class TestEnumTypes(str, Enum):
     VARIANT_8 = "Variant8"
     VARIANT_9 = "Variant9"
 
-class TestEnumVariant1(BaseModel):
-    pass
 
-class TestEnumVariant5(BaseModel):
-    pass
 
-class TestEnumVariant8(BaseModel):
-    pass
 
 class TestEnum(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: TestEnumTypes
-    content: Union[TestEnumVariant1, TestEnumVariant5, TestEnumVariant7, TestEnumVariant8, TestEnumVariant9, None]
+    content: Union[TestEnumVariant7, TestEnumVariant9, None]
 
 
     @classmethod

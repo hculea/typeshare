@@ -12,8 +12,6 @@ class SomeEnumTypes(str, Enum):
     A = "A"
     C = "C"
 
-class SomeEnumA(BaseModel):
-    pass
 
 class SomeEnumC(BaseModel):
     content: int
@@ -21,7 +19,7 @@ class SomeEnumC(BaseModel):
 class SomeEnum(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: SomeEnumTypes
-    content: Union[SomeEnumA, SomeEnumC, None]
+    content: Union[SomeEnumC, None]
 
 
     @classmethod

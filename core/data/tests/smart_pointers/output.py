@@ -61,11 +61,7 @@ class BoxyColorsTypes(str, Enum):
     BLUE = "Blue"
     GREEN = "Green"
 
-class BoxyColorsRed(BaseModel):
-    pass
 
-class BoxyColorsBlue(BaseModel):
-    pass
 
 class BoxyColorsGreen(BaseModel):
     content: str
@@ -73,7 +69,7 @@ class BoxyColorsGreen(BaseModel):
 class BoxyColors(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: BoxyColorsTypes
-    content: Union[BoxyColorsRed, BoxyColorsBlue, BoxyColorsGreen, None]
+    content: Union[BoxyColorsGreen, None]
 
 
     @classmethod

@@ -18,13 +18,11 @@ class AddressTypes(str, Enum):
 class AddressFixedAddress(BaseModel):
     content: AddressDetails
 
-class AddressNoFixedAddress(BaseModel):
-    pass
 
 class Address(BaseModel):
     model_config = ConfigDict(use_enum_values=True)
     type: AddressTypes
-    content: Union[AddressFixedAddress, AddressNoFixedAddress, None]
+    content: Union[AddressFixedAddress, None]
 
 
     @classmethod
