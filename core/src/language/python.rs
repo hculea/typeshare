@@ -269,12 +269,11 @@ impl Language for Python {
 
         // Generate named types for any anonymous struct variants of this enum
         self.write_types_for_anonymous_structs(w, e, &make_anonymous_struct_name)?;
-
+        self.add_import("enum".to_string(), "Enum".to_string());
         match e {
             // Write all the unit variants out (there can only be unit variants in
             // this case)
             RustEnum::Unit(shared) => {
-                self.add_import("enum".to_string(), "Enum".to_string());
                 writeln!(w, "class {}(Enum):", shared.id.renamed)?;
 
                 let fields = if shared.variants.is_empty() {
@@ -367,10 +366,7 @@ impl Python {
         match is_optional {
             true => {
                 self.add_import("typing".to_string(), "Optional".to_string());
-                writeln!(
-                    w,
-                    "    {python_field_name}: Optional[{python_type}] = None"
-                )?
+                writeln!(w, "    {python_field_name}: Optional[{python_type}] = None")?
             }
             false => writeln!(w, "    {python_field_name}: {python_type}")?,
         }
@@ -452,19 +448,19 @@ impl Python {
         Ok(())
     }
 
-    fn gen_unit_variant_ctor(
-        &mut self,
+    fn get_constructor_method_name(enum_name: &str, variant_name: &str) -> String {
+        format!("new_{}_{}", enum_name, variant_name).to_case(Case::Snake)
+    }
+
+    fn gen_unit_variant_constructor(
         variant_constructors: &mut Vec<String>,
         variant_shared: &RustEnumVariantShared,
         enum_shared: &RustEnumShared,
         tag_key: &str,
         content_key: &str,
     ) {
-        let method_name = format!(
-            "new_{}_{}",
-            enum_shared.id.renamed, variant_shared.id.renamed
-        )
-        .to_case(Case::Snake);
+        let method_name =
+            Self::get_constructor_method_name(&enum_shared.id.renamed, &variant_shared.id.renamed);
 
         variant_constructors.push(format!(
             r#"
@@ -486,8 +482,7 @@ impl Python {
         ));
     }
 
-    fn gen_tuple_variant_ctor(
-        &mut self,
+    fn gen_tuple_variant_constructor(
         variant_constructors: &mut Vec<String>,
         variant_shared: &RustEnumVariantShared,
         enum_shared: &RustEnumShared,
@@ -495,11 +490,8 @@ impl Python {
         tag_key: &str,
         content_key: &str,
     ) {
-        let method_name = format!(
-            "new_{}_{}",
-            enum_shared.id.renamed, variant_shared.id.renamed
-        )
-        .to_case(Case::Snake);
+        let method_name =
+            Self::get_constructor_method_name(&enum_shared.id.renamed, &variant_shared.id.renamed);
 
         variant_constructors.push(format!(
             r#"
@@ -519,7 +511,7 @@ impl Python {
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn gen_variant_ctors(
+    fn gen_anon_struct_variant_constructor(
         &mut self,
         variant_constructors: &mut Vec<String>,
         variant_fields: &[RustField],
@@ -529,11 +521,8 @@ impl Python {
         tag_key: &str,
         content_key: &str,
     ) {
-        let method_name = format!(
-            "new_{}_{}",
-            enum_shared.id.renamed, variant_shared.id.renamed
-        )
-        .to_case(Case::Snake);
+        let method_name =
+            Self::get_constructor_method_name(&enum_shared.id.renamed, &variant_shared.id.renamed);
 
         let ctor_param = variant_fields
             .iter()
@@ -590,8 +579,8 @@ impl Python {
             .for_each(|v| self.add_type_var(v));
         let mut variants: Vec<(String, Vec<String>)> = Vec::new();
         self.add_import("typing".to_string(), "Union".to_string());
-        self.add_import("enum".to_string(), "Enum".to_string());
         self.add_import("pydantic".to_string(), "ConfigDict".to_string());
+        self.add_import("pydantic".to_string(), "BaseModel".to_string());
         // write "types" class: a union of all the enum variants
         writeln!(w, "class {}Types(str, Enum):", shared.id.renamed)?;
         let all_enum_variants_name = shared
@@ -632,10 +621,8 @@ impl Python {
                     let variant_name = format!("{}{}", shared.id.renamed, unit_variant.id.renamed);
                     variants.push((variant_name.clone(), vec![]));
                     writeln!(w, "class {variant_class_name}(BaseModel):")?;
-                    writeln!(
-                        w,
-                        "    pass")?;
-                    self.gen_unit_variant_ctor(
+                    writeln!(w, "    pass")?;
+                    Self::gen_unit_variant_constructor(
                         &mut variant_constructors,
                         unit_variant,
                         shared,
@@ -648,7 +635,7 @@ impl Python {
                     ty,
                     shared: variant_shared,
                 } => {
-                    self.gen_tuple_variant_ctor(
+                    Self::gen_tuple_variant_constructor(
                         &mut variant_constructors,
                         variant_shared,
                         shared,
@@ -666,7 +653,6 @@ impl Python {
                                 .collect();
                             dedup(&mut generic_parameters);
                             if generic_parameters.is_empty() {
-                                self.add_import("pydantic".to_string(), "BaseModel".to_string());
                                 writeln!(w, "class {variant_class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
@@ -688,7 +674,6 @@ impl Python {
                                 }
                             }
                             if generics.is_empty() {
-                                self.add_import("pydantic".to_string(), "BaseModel".to_string());
                                 writeln!(w, "class {variant_class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
@@ -713,7 +698,7 @@ impl Python {
                 } => {
                     // writing is taken care of by write_types_for_anonymous_structs in write_enum
                     // we just need to push to the variant_constructors
-                    self.gen_variant_ctors(
+                    self.gen_anon_struct_variant_constructor(
                         &mut variant_constructors,
                         fields,
                         variant_shared,
@@ -788,10 +773,7 @@ fn handle_model_config(w: &mut dyn Write, python_module: &mut Python, rs: &RustS
 mod test {
     use syn::{parse_str, ItemEnum};
 
-    use crate::{
-        parser::parse_enum,
-        rust_types::Id,
-    };
+    use crate::{parser::parse_enum, rust_types::Id};
 
     use super::*;
     #[test]
@@ -865,7 +847,10 @@ mod test {
             decorators: Default::default(),
         };
         python.write_field(mock_writer, &rust_field, &[]).unwrap();
-        assert_eq!(String::from_utf8_lossy(mock_writer), "    field: Optional[str] = None\n");
+        assert_eq!(
+            String::from_utf8_lossy(mock_writer),
+            "    field: Optional[str] = None\n"
+        );
     }
 
     #[test]
