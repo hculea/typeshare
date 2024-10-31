@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Annotated, Optional
+from typing import Optional
 
 
 class A(BaseModel):
@@ -14,25 +14,25 @@ class A(BaseModel):
 class B(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    depends_on: Annotated[A, Field(alias="dependsOn")]
+    depends_on: A = Field(alias="dependsOn")
 
 
 class C(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    depends_on: Annotated[B, Field(alias="dependsOn")]
+    depends_on: B = Field(alias="dependsOn")
 
 
 class E(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    depends_on: Annotated[D, Field(alias="dependsOn")]
+    depends_on: D = Field(alias="dependsOn")
 
 
 class D(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    depends_on: Annotated[C, Field(alias="dependsOn")]
-    also_depends_on: Optional[Annotated[E, Field(alias="alsoDependsOn")]] = None
+    depends_on: C = Field(alias="dependsOn")
+    also_depends_on: Optional[E] = Field(alias="alsoDependsOn", default=None)
 
 

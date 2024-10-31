@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Annotated, List, Union
+from typing import List, Union
 
 
 class AnonymousStructWithRenameList(BaseModel):
@@ -32,9 +32,9 @@ class AnonymousStructWithRenameKebabCase(BaseModel):
     """
     model_config = ConfigDict(populate_by_name=True)
 
-    another_list: Annotated[List[str], Field(alias="another-list")]
+    another_list: List[str] = Field(alias="another-list")
     camel_case_string_field: str
-    something_else: Annotated[bool, Field(alias="something-else")]
+    something_else: bool = Field(alias="something-else")
 
 
 class AnonymousStructWithRenameTypes(str, Enum):

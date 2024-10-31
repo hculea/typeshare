@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
-from typing import Annotated, List, Optional
+from typing import List, Optional
 
 
 class OtherType(BaseModel):
@@ -18,9 +18,9 @@ class Person(BaseModel):
 
     name: str
     age: int
-    extra_special_field_1: Annotated[int, Field(alias="extraSpecialFieldOne")]
-    extra_special_field_2: Optional[Annotated[List[str], Field(alias="extraSpecialFieldTwo")]] = None
-    non_standard_data_type: Annotated[OtherType, Field(alias="nonStandardDataType")]
-    non_standard_data_type_in_array: Optional[Annotated[List[OtherType], Field(alias="nonStandardDataTypeInArray")]] = None
+    extra_special_field_1: int = Field(alias="extraSpecialFieldOne")
+    extra_special_field_2: Optional[List[str]] = Field(alias="extraSpecialFieldTwo", default=None)
+    non_standard_data_type: OtherType = Field(alias="nonStandardDataType")
+    non_standard_data_type_in_array: Optional[List[OtherType]] = Field(alias="nonStandardDataTypeInArray", default=None)
 
 

@@ -3,7 +3,7 @@
 """
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Dict, List, Optional
 
 
@@ -21,7 +21,7 @@ class Types(BaseModel):
     array: List[str]
     fixed_length_array: List[str]
     dictionary: Dict[str, int]
-    optional_dictionary: Optional[Dict[str, int]] = None
+    optional_dictionary: Optional[Dict[str, int]] = Field(default=None)
     custom_type: CustomType
 
 
