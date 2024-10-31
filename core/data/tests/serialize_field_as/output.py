@@ -10,6 +10,6 @@ from typing import List, Optional
 class EditItemViewModelSaveRequest(BaseModel):
     context: str
     values: List[EditItemSaveValue]
-    fill_action: Optional[AutoFillItemActionRequest]
+    fill_action: Optional[AutoFillItemActionRequest] = None
 
 

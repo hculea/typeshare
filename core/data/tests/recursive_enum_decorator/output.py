@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Literal, Union
+from typing import Union
 
 
 class MoreOptionsExactly(BaseModel):

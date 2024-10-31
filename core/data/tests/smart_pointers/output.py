@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import List, Literal, Union
+from typing import List, Union
 
 
 class ArcyColors(BaseModel):
@@ -62,10 +62,10 @@ class BoxyColorsTypes(str, Enum):
     GREEN = "Green"
 
 class BoxyColorsRed(BaseModel):
-    content = Literal["Red"]
+    pass
 
 class BoxyColorsBlue(BaseModel):
-    content = Literal["Blue"]
+    pass
 
 class BoxyColorsGreen(BaseModel):
     content: str

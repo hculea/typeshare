@@ -240,9 +240,8 @@ impl Language for Python {
         let bases = match rs.generic_types.is_empty() {
             true => "BaseModel".to_string(),
             false => {
-                self.add_import("pydantic.generics".to_string(), "GenericModel".to_string());
                 self.add_import("typing".to_string(), "Generic".to_string());
-                format!("GenericModel, Generic[{}]", rs.generic_types.join(", "))
+                format!("BaseModel, Generic[{}]", rs.generic_types.join(", "))
             }
         };
         writeln!(w, "class {}({}):", rs.id.renamed, bases,)?;
@@ -349,14 +348,11 @@ impl Python {
         field: &RustField,
         generic_types: &[String],
     ) -> std::io::Result<()> {
+        let is_optional = field.ty.is_optional() || field.has_default;
         let mut python_type = self
             .format_type(&field.ty, generic_types)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
         let python_field_name = python_property_aware_rename(&field.id.original);
-        if field.ty.is_optional() {
-            python_type = format!("Optional[{}]", python_type);
-            self.add_import("typing".to_string(), "Optional".to_string());
-        }
         python_type = match field.id.original == field.id.renamed {
             true => python_type,
             false => {
@@ -368,15 +364,12 @@ impl Python {
                 )
             }
         };
-        // TODO: Add support for default values other than None
-        match field.has_default && field.ty.is_optional() {
+        match is_optional {
             true => {
-                // in the future we will want to get the default value properly, something like:
-                // let default_value = get_default_value(...)
-                let default_value = "None";
+                self.add_import("typing".to_string(), "Optional".to_string());
                 writeln!(
                     w,
-                    "    {python_field_name}: {python_type} = {default_value}"
+                    "    {python_field_name}: Optional[{python_type}] = None"
                 )?
             }
             false => writeln!(w, "    {python_field_name}: {python_type}")?,
@@ -636,17 +629,12 @@ impl Python {
             match variant {
                 RustEnumVariant::Unit(unit_variant) => {
                     contains_unit_variant = true;
-
-                    self.add_import("typing".to_string(), "Literal".to_string());
                     let variant_name = format!("{}{}", shared.id.renamed, unit_variant.id.renamed);
                     variants.push((variant_name.clone(), vec![]));
                     writeln!(w, "class {variant_class_name}(BaseModel):")?;
                     writeln!(
                         w,
-                        "    {content_key} = Literal[\"{}\"]",
-                        // escape any double quotes in the variant name
-                        unit_variant.id.renamed.replace("\"", "\\\"")
-                    )?;
+                        "    pass")?;
                     self.gen_unit_variant_ctor(
                         &mut variant_constructors,
                         unit_variant,
@@ -660,7 +648,6 @@ impl Python {
                     ty,
                     shared: variant_shared,
                 } => {
-                    self.add_import("typing".to_string(), "Literal".to_string());
                     self.gen_tuple_variant_ctor(
                         &mut variant_constructors,
                         variant_shared,
@@ -683,13 +670,9 @@ impl Python {
                                 writeln!(w, "class {variant_class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
-                                self.add_import(
-                                    "pydantic.generics".to_string(),
-                                    "GenericModel".to_string(),
-                                );
                                 writeln!(
                                     w,
-                                    "class {variant_class_name}(GenericModel, Generic[{}]):",
+                                    "class {variant_class_name}(BaseModel, Generic[{}]):",
                                     // note: generics is always unique (a single item)
                                     generic_parameters.join(", ")
                                 )
@@ -709,13 +692,9 @@ impl Python {
                                 writeln!(w, "class {variant_class_name}(BaseModel):",).unwrap();
                             } else {
                                 self.add_import("typing".to_string(), "Generic".to_string());
-                                self.add_import(
-                                    "pydantic.generics".to_string(),
-                                    "GenericModel".to_string(),
-                                );
                                 writeln!(
                                     w,
-                                    "class {variant_class_name}(GenericModel, Generic[{}]):",
+                                    "class {variant_class_name}(BaseModel, Generic[{}]):",
                                     generics.join(", ")
                                 )
                                 .unwrap();
@@ -863,7 +842,7 @@ mod test {
         python.write_field(mock_writer, &rust_field, &[]).unwrap();
         assert_eq!(
             String::from_utf8_lossy(mock_writer),
-            "    field: Optional[str]\n"
+            "    field: Optional[str] = None\n"
         );
     }
 
@@ -886,7 +865,7 @@ mod test {
             decorators: Default::default(),
         };
         python.write_field(mock_writer, &rust_field, &[]).unwrap();
-        assert_eq!(String::from_utf8_lossy(mock_writer), "    field: str\n");
+        assert_eq!(String::from_utf8_lossy(mock_writer), "    field: Optional[str] = None\n");
     }
 
     #[test]

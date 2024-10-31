@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import List, Literal, Union
+from typing import List, Union
 
 
 class ItemDetailsFieldValue(BaseModel):

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Literal, Union
+from typing import Union
 
 
 class AutofilledByUs(BaseModel):
@@ -80,7 +80,7 @@ class EnumWithManyVariantsTypes(str, Enum):
     ANOTHER_ANON_VARIANT = "AnotherAnonVariant"
 
 class EnumWithManyVariantsUnitVariant(BaseModel):
-    content = Literal["UnitVariant"]
+    pass
 
 class EnumWithManyVariantsTupleVariantString(BaseModel):
     content: str
@@ -89,7 +89,7 @@ class EnumWithManyVariantsTupleVariantInt(BaseModel):
     content: int
 
 class EnumWithManyVariantsAnotherUnitVariant(BaseModel):
-    content = Literal["AnotherUnitVariant"]
+    pass
 
 class EnumWithManyVariants(BaseModel):
     model_config = ConfigDict(use_enum_values=True)

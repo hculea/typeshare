@@ -14,7 +14,7 @@ class Things(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     bla: str
-    some_label: Annotated[Optional[str], Field(alias="label")]
-    label_left: Annotated[Optional[str], Field(alias="label-left")]
+    some_label: Optional[Annotated[str, Field(alias="label")]] = None
+    label_left: Optional[Annotated[str, Field(alias="label-left")]] = None
 
 

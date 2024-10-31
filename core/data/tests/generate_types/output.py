@@ -21,7 +21,7 @@ class Types(BaseModel):
     array: List[str]
     fixed_length_array: List[str]
     dictionary: Dict[str, int]
-    optional_dictionary: Optional[Dict[str, int]]
+    optional_dictionary: Optional[Dict[str, int]] = None
     custom_type: CustomType
 
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Literal, Union
+from typing import Union
 
 
 class AddressDetails(BaseModel):
@@ -19,7 +19,7 @@ class AddressFixedAddress(BaseModel):
     content: AddressDetails
 
 class AddressNoFixedAddress(BaseModel):
-    content = Literal["NoFixedAddress"]
+    pass
 
 class Address(BaseModel):
     model_config = ConfigDict(use_enum_values=True)

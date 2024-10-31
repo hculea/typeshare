@@ -19,8 +19,8 @@ class Person(BaseModel):
     name: str
     age: int
     extra_special_field_1: Annotated[int, Field(alias="extraSpecialFieldOne")]
-    extra_special_field_2: Annotated[Optional[List[str]], Field(alias="extraSpecialFieldTwo")]
+    extra_special_field_2: Optional[Annotated[List[str], Field(alias="extraSpecialFieldTwo")]] = None
     non_standard_data_type: Annotated[OtherType, Field(alias="nonStandardDataType")]
-    non_standard_data_type_in_array: Annotated[Optional[List[OtherType]], Field(alias="nonStandardDataTypeInArray")]
+    non_standard_data_type_in_array: Optional[Annotated[List[OtherType], Field(alias="nonStandardDataTypeInArray")]] = None
 
 

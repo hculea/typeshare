@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Literal, Union
+from typing import Union
 
 
 class DefinedTwice(BaseModel):
@@ -58,13 +58,13 @@ class TestEnumTypes(str, Enum):
     VARIANT_9 = "Variant9"
 
 class TestEnumVariant1(BaseModel):
-    content = Literal["Variant1"]
+    pass
 
 class TestEnumVariant5(BaseModel):
-    content = Literal["Variant5"]
+    pass
 
 class TestEnumVariant8(BaseModel):
-    content = Literal["Variant8"]
+    pass
 
 class TestEnum(BaseModel):
     model_config = ConfigDict(use_enum_values=True)

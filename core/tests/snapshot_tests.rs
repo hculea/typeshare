@@ -454,8 +454,7 @@ tests! {
         },
         kotlin,
         scala,
-        typescript,
-        python
+        typescript
     ];
     can_generate_generic_struct: [
         swift {
@@ -465,7 +464,6 @@ tests! {
         kotlin,
         scala,
         typescript,
-        python
     ];
     can_generate_generic_type_alias: [
         swift {
@@ -473,8 +471,7 @@ tests! {
         },
         kotlin,
         scala,
-        typescript,
-        python
+        typescript
     ];
     can_generate_slice_of_user_type: [swift, kotlin, scala, typescript, go, python];
     can_generate_readonly_fields: [

@@ -12,7 +12,7 @@ class QualifiedTypes(BaseModel):
     qualified: str
     qualified_vec: List[str]
     qualified_hashmap: Dict[str, str]
-    qualified_optional: Optional[str]
-    qualfied_optional_hashmap_vec: Optional[Dict[str, List[str]]]
+    qualified_optional: Optional[str] = None
+    qualfied_optional_hashmap_vec: Optional[Dict[str, List[str]]] = None
 
 

@@ -17,7 +17,7 @@ class Person(BaseModel):
     last_name: Annotated[str, Field(alias="lastName")]
     age: int
     extra_special_field_1: Annotated[int, Field(alias="extraSpecialField1")]
-    extra_special_field_2: Annotated[Optional[List[str]], Field(alias="extraSpecialField2")]
+    extra_special_field_2: Optional[Annotated[List[str], Field(alias="extraSpecialField2")]] = None
 
 
 class Person2(BaseModel):

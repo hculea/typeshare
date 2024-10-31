@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Literal, Union
+from typing import Union
 
 
 class SomeEnumTypes(str, Enum):
@@ -13,7 +13,7 @@ class SomeEnumTypes(str, Enum):
     C = "C"
 
 class SomeEnumA(BaseModel):
-    content = Literal["A"]
+    pass
 
 class SomeEnumC(BaseModel):
     content: int

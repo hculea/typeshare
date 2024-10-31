@@ -19,7 +19,7 @@ class Person(BaseModel):
     This is another comment
     """
     age: int
-    info: Optional[str]
+    info: Optional[str] = None
     emails: List[str]
     location: Location
 

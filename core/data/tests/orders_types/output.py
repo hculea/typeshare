@@ -33,6 +33,6 @@ class D(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     depends_on: Annotated[C, Field(alias="dependsOn")]
-    also_depends_on: Annotated[Optional[E], Field(alias="alsoDependsOn")]
+    also_depends_on: Optional[Annotated[E, Field(alias="alsoDependsOn")]] = None
 
 
