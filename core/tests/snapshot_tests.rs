@@ -549,7 +549,7 @@ tests! {
     test_default_decorators: [swift { default_decorators: vec!["Sendable".into(), "Identifiable".into()]}];
     test_default_generic_constraints: [swift { default_generic_constraints: typeshare_core::language::GenericConstraints::from_config(vec!["Sendable".into(), "Identifiable".into()]) }];
     test_i54_u53_type: [swift, kotlin, scala,  typescript, go, python];
-    test_serde_default_struct: [swift, kotlin, scala,  typescript, go];
+    test_serde_default_struct: [swift, kotlin, scala,  typescript, go, python];
     test_serde_iso8601: [
         swift {
             prefix: String::new(),
