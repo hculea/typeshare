@@ -624,15 +624,11 @@ impl Python {
         // write each of the enum variant as a class:
         for variant in &shared.variants {
             let variant_class_name = make_struct_name(&variant.shared().id.original);
-            variant_class_names.push(variant_class_name.clone());
-
             match variant {
                 RustEnumVariant::Unit(unit_variant) => {
                     contains_unit_variant = true;
                     let variant_name = format!("{}{}", shared.id.renamed, unit_variant.id.renamed);
                     variants.push((variant_name.clone(), vec![]));
-                    writeln!(w, "class {variant_class_name}(BaseModel):")?;
-                    writeln!(w, "    pass")?;
                     Self::gen_unit_variant_constructor(
                         &mut variant_constructors,
                         unit_variant,
@@ -646,6 +642,7 @@ impl Python {
                     ty,
                     shared: variant_shared,
                 } => {
+                    variant_class_names.push(variant_class_name.clone());
                     Self::gen_tuple_variant_constructor(
                         &mut variant_constructors,
                         variant_shared,
@@ -707,6 +704,7 @@ impl Python {
                     fields,
                     shared: variant_shared,
                 } => {
+                    variant_class_names.push(variant_class_name.clone());
                     // writing is taken care of by write_types_for_anonymous_structs in write_enum
                     // we just need to push to the variant_constructors
                     self.gen_anon_struct_variant_constructor(
