@@ -783,184 +783,184 @@ fn handle_model_config(w: &mut dyn Write, python_module: &mut Python, rs: &RustS
     };
 }
 
-// #[cfg(test)]
-// mod test {
-//     use syn::{parse_str, ItemEnum};
+#[cfg(test)]
+mod test {
+    use syn::{parse_str, ItemEnum};
 
-//     use crate::{parser::parse_enum, rust_types::Id};
+    use crate::{parser::parse_enum, rust_types::Id};
 
-//     use super::*;
-//     #[test]
-//     fn test_python_property_aware_rename() {
-//         assert_eq!(python_property_aware_rename("class"), "class_");
-//         assert_eq!(python_property_aware_rename("snake_case"), "snake_case");
-//     }
+    use super::*;
+    #[test]
+    fn test_python_property_aware_rename() {
+        assert_eq!(python_property_aware_rename("class"), "class_");
+        assert_eq!(python_property_aware_rename("snake_case"), "snake_case");
+    }
 
-//     #[test]
-//     fn test_optional_value_with_serde_default() {
-//         let mut python = Python::default();
-//         let mock_writer = &mut Vec::new();
-//         let rust_field = RustField {
-//             id: Id {
-//                 original: "field".to_string(),
-//                 renamed: "field".to_string(),
-//             },
-//             ty: RustType::Special(SpecialRustType::Option(Box::new(RustType::Simple {
-//                 id: "str".to_string(),
-//             }))),
-//             has_default: true,
-//             comments: Default::default(),
-//             decorators: Default::default(),
-//         };
-//         python.write_field(mock_writer, &rust_field, &[]).unwrap();
-//         assert_eq!(
-//             String::from_utf8_lossy(mock_writer),
-//             "    field: Optional[str] = None\n"
-//         );
-//     }
+    #[test]
+    fn test_optional_value_with_serde_default() {
+        let mut python = Python::default();
+        let mock_writer = &mut Vec::new();
+        let rust_field = RustField {
+            id: Id {
+                original: "field".to_string(),
+                renamed: "field".to_string(),
+            },
+            ty: RustType::Special(SpecialRustType::Option(Box::new(RustType::Simple {
+                id: "str".to_string(),
+            }))),
+            has_default: true,
+            comments: Default::default(),
+            decorators: Default::default(),
+        };
+        python.write_field(mock_writer, &rust_field, &[]).unwrap();
+        assert_eq!(
+            String::from_utf8_lossy(mock_writer),
+            "    field: Optional[str] = Field(default=None)\n"
+        );
+    }
 
-//     #[test]
-//     fn test_optional_value_no_serde_default() {
-//         let mut python = Python::default();
-//         let mock_writer = &mut Vec::new();
-//         let rust_field = RustField {
-//             id: Id {
-//                 original: "field".to_string(),
-//                 renamed: "field".to_string(),
-//             },
-//             ty: RustType::Special(SpecialRustType::Option(Box::new(RustType::Simple {
-//                 id: "str".to_string(),
-//             }))),
-//             has_default: false,
-//             comments: Default::default(),
-//             decorators: Default::default(),
-//         };
-//         python.write_field(mock_writer, &rust_field, &[]).unwrap();
-//         assert_eq!(
-//             String::from_utf8_lossy(mock_writer),
-//             "    field: Optional[str] = None\n"
-//         );
-//     }
+    #[test]
+    fn test_optional_value_no_serde_default() {
+        let mut python = Python::default();
+        let mock_writer = &mut Vec::new();
+        let rust_field = RustField {
+            id: Id {
+                original: "field".to_string(),
+                renamed: "field".to_string(),
+            },
+            ty: RustType::Special(SpecialRustType::Option(Box::new(RustType::Simple {
+                id: "str".to_string(),
+            }))),
+            has_default: false,
+            comments: Default::default(),
+            decorators: Default::default(),
+        };
+        python.write_field(mock_writer, &rust_field, &[]).unwrap();
+        assert_eq!(
+            String::from_utf8_lossy(mock_writer),
+            "    field: Optional[str] = Field(default=None)\n"
+        );
+    }
 
-//     #[test]
-//     fn test_non_optional_value_with_serde_default() {
-//         // technically an invalid case at the moment, as we don't support serde default values other than None
-//         // TODO: change this test if we do
-//         let mut python = Python::default();
-//         let mock_writer = &mut Vec::new();
-//         let rust_field = RustField {
-//             id: Id {
-//                 original: "field".to_string(),
-//                 renamed: "field".to_string(),
-//             },
-//             ty: RustType::Simple {
-//                 id: "str".to_string(),
-//             },
-//             has_default: true,
-//             comments: Default::default(),
-//             decorators: Default::default(),
-//         };
-//         python.write_field(mock_writer, &rust_field, &[]).unwrap();
-//         assert_eq!(
-//             String::from_utf8_lossy(mock_writer),
-//             "    field: Optional[str] = None\n"
-//         );
-//     }
+    #[test]
+    fn test_non_optional_value_with_serde_default() {
+        // technically an invalid case at the moment, as we don't support serde default values other than None
+        // TODO: change this test if we do
+        let mut python = Python::default();
+        let mock_writer = &mut Vec::new();
+        let rust_field = RustField {
+            id: Id {
+                original: "field".to_string(),
+                renamed: "field".to_string(),
+            },
+            ty: RustType::Simple {
+                id: "str".to_string(),
+            },
+            has_default: true,
+            comments: Default::default(),
+            decorators: Default::default(),
+        };
+        python.write_field(mock_writer, &rust_field, &[]).unwrap();
+        assert_eq!(
+            String::from_utf8_lossy(mock_writer),
+            "    field: Optional[str] = Field(default=None)\n"
+        );
+    }
 
-//     #[test]
-//     fn test_non_optional_value_with_no_serde_default() {
-//         let mut python = Python::default();
-//         let mock_writer = &mut Vec::new();
-//         let rust_field = RustField {
-//             id: Id {
-//                 original: "field".to_string(),
-//                 renamed: "field".to_string(),
-//             },
-//             ty: RustType::Simple {
-//                 id: "str".to_string(),
-//             },
-//             has_default: false,
-//             comments: Default::default(),
-//             decorators: Default::default(),
-//         };
-//         python.write_field(mock_writer, &rust_field, &[]).unwrap();
-//         assert_eq!(String::from_utf8_lossy(mock_writer), "    field: str\n");
-//     }
+    #[test]
+    fn test_non_optional_value_with_no_serde_default() {
+        let mut python = Python::default();
+        let mock_writer = &mut Vec::new();
+        let rust_field = RustField {
+            id: Id {
+                original: "field".to_string(),
+                renamed: "field".to_string(),
+            },
+            ty: RustType::Simple {
+                id: "str".to_string(),
+            },
+            has_default: false,
+            comments: Default::default(),
+            decorators: Default::default(),
+        };
+        python.write_field(mock_writer, &rust_field, &[]).unwrap();
+        assert_eq!(String::from_utf8_lossy(mock_writer), "    field: str\n");
+    }
 
-//     #[test]
-//     fn simple_test_tagged_enum() {
-//         let mut python = Python::default();
+    #[test]
+    fn simple_test_tagged_enum() {
+        let mut python = Python::default();
 
-//         let enum_source = r#"
-// 		#[serde(tag = "type", content = "content")]
-// 		enum Test {
-//             Unit,
-//             Tuple(i32),
-//             Struct { field: String },
-//         }"#;
+        let enum_source = r#"
+		#[serde(tag = "type", content = "content")]
+		enum Test {
+            Unit,
+            Tuple(i32),
+            Struct { field: String },
+        }"#;
 
-//         // Parse the source into an ItemEnum
-//         let item_enum: ItemEnum = parse_str(enum_source).unwrap();
+        // Parse the source into an ItemEnum
+        let item_enum: ItemEnum = parse_str(enum_source).unwrap();
 
-//         let test_enum = parse_enum(&item_enum, &[]).unwrap();
-//         // stdout as writer
-//         let w = &mut std::io::stdout();
-//         let rust_enum = if let RustItem::Enum(e) = test_enum {
-//             e
-//         } else {
-//             panic!("Expected enum")
-//         };
-//         // python
-//         //     .write_algebraic_enum("test_tag_key", "test_content_key", &shared_enum, w)
-//         //     .unwrap();
-//         println!("--------------");
-//         python.write_enum(w, &rust_enum).unwrap();
-//     }
+        let test_enum = parse_enum(&item_enum, &[]).unwrap();
+        // stdout as writer
+        let w = &mut std::io::stdout();
+        let rust_enum = if let RustItem::Enum(e) = test_enum {
+            e
+        } else {
+            panic!("Expected enum")
+        };
+        // python
+        //     .write_algebraic_enum("test_tag_key", "test_content_key", &shared_enum, w)
+        //     .unwrap();
+        println!("--------------");
+        python.write_enum(w, &rust_enum).unwrap();
+    }
 
-//     #[test]
-//     fn test_tagged_enum() {
-//         let mut python = Python::default();
+    #[test]
+    fn test_tagged_enum() {
+        let mut python = Python::default();
 
-//         let enum_source = r#"
-// 		#[serde(tag = "type", content = "content")]
-// 		pub enum ItemModification {
-//             SetTitle {
-//                 new_title: String,
-//             },
-//             AddField {
-//                 field_label: String,
-//                 field_value: String,
-//                 field_type: String,
-//                 section_title: Option<String>,
-//             },
-//             SetField {
-//                 field_name: String,
-//                 new_value: String,
-//                 section_title: Option<String>,
-//             },
-//             RemoveField {
-//                 field_name: String,
-//                 section_title: Option<String>,
-//             },
-//         }"#;
+        let enum_source = r#"
+		#[serde(tag = "type", content = "content")]
+		pub enum ItemModification {
+            SetTitle {
+                new_title: String,
+            },
+            AddField {
+                field_label: String,
+                field_value: String,
+                field_type: String,
+                section_title: Option<String>,
+            },
+            SetField {
+                field_name: String,
+                new_value: String,
+                section_title: Option<String>,
+            },
+            RemoveField {
+                field_name: String,
+                section_title: Option<String>,
+            },
+        }"#;
 
-//         let item_enum: ItemEnum = parse_str(enum_source).unwrap();
+        let item_enum: ItemEnum = parse_str(enum_source).unwrap();
 
-//         let test_enum = parse_enum(&item_enum, &[]).unwrap();
+        let test_enum = parse_enum(&item_enum, &[]).unwrap();
 
-//         let rust_enum = if let RustItem::Enum(e) = test_enum {
-//             e
-//         } else {
-//             panic!("Expected enum")
-//         };
+        let rust_enum = if let RustItem::Enum(e) = test_enum {
+            e
+        } else {
+            panic!("Expected enum")
+        };
 
-//         let stdout_writer = &mut std::io::stdout();
+        let stdout_writer = &mut std::io::stdout();
 
-//         // let rust_enum = RustEnum::Algebraic {
-//         //     tag_key: "test_tag_key".to_string(),
-//         //     content_key: "test_content_key".to_string(),
-//         //     shared: shared_enum,
-//         // };
-//         python.write_enum(stdout_writer, &rust_enum).unwrap();
-//     }
-// }
+        // let rust_enum = RustEnum::Algebraic {
+        //     tag_key: "test_tag_key".to_string(),
+        //     content_key: "test_content_key".to_string(),
+        //     shared: shared_enum,
+        // };
+        python.write_enum(stdout_writer, &rust_enum).unwrap();
+    }
+}
